@@ -58,7 +58,7 @@ const AuthComponent = () => {
           }
         }
       )
-      console.log(response);
+      // console.log(response);
       
       if(response.data && response.status === 200){
         setMessage("UserCreated! Please Login")
@@ -114,6 +114,13 @@ const AuthComponent = () => {
                 className="mt-1 p-3 block w-full h-8 rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
               />
             </div>
+            <div className='flex justify-between items-center text-orange-400'>
+                <div>
+                  <input type="checkbox" /> Remember Me
+                </div>
+              <button className='text-orange-400 text-end'>Forgot Password?</button>
+            </div>
+            
             <button
               type="submit"
               className="w-full h-12 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-400 hover:bg-orange-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-bg-orange-400"
