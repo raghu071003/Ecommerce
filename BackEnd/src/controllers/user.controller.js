@@ -39,7 +39,7 @@ const registerUser = asyncHandler(async(req,res)=>{
 
 const userLogin = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-
+    console.log(req.body)
     // Find the user by email
     const user = await User.findOne({ email });
 
@@ -53,6 +53,9 @@ const userLogin = asyncHandler(async (req, res) => {
     if (!isValidPassword) {
         throw new ApiError(401, "Invalid credentials");
     }
+
+    //Generate a Token
+
 
     // Send the response
     res.status(200).json(
