@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from "axios"
-
+import { Navigate, useNavigate } from 'react-router';
 const AuthComponent = () => {
   const [activeTab, setActiveTab] = useState('login');
   const [email, setEmail] = useState('');
@@ -9,7 +9,7 @@ const AuthComponent = () => {
   const [message, setMessage] = useState('');
   const [mobile,setMobile] = useState();
   const [loading,setIsLoading] = useState(false)
-
+  const navigate = useNavigate();
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -27,13 +27,14 @@ const AuthComponent = () => {
       
       if (response.data && response.status === 200) {
         setMessage('Login successful!');
+        navigate('/');
         // Handle successful login (e.g., store token, redirect)
       } else {
         setMessage('Login failed. Please check your credentials.');
       }
     } catch (error) {
       console.error('Login error:', error);
-      setMessage(error.response?.data?.message || 'An error occurred during login. Please try again.');
+      setMessage(error.response?.data || 'An error occurred during login. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -118,7 +119,7 @@ const AuthComponent = () => {
                 <div>
                   <input type="checkbox" /> Remember Me
                 </div>
-              <button className='text-orange-400 text-end'>Forgot Password?</button>
+              <button className='text-orange-400 text-end' >Forgot Password?</button>
             </div>
             
             <button

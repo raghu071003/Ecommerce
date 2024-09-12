@@ -1,9 +1,8 @@
-import mongoose from "mongoose";
 import {User} from '../models/user.model.js'
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import bcrypt from "bcrypt"
+import { options } from '../constants.js';
 
 
 const registerUser = asyncHandler(async(req,res)=>{
@@ -36,10 +35,25 @@ const registerUser = asyncHandler(async(req,res)=>{
         new ApiResponse(201,createdUser,"user created!")
     )
 })
+const generateTokens =async (userId)=>{
+    const user = await User.findById(userId);
+    if(!user){
+        throw new ApiError(500,"Something Went Wrong")
+    }
+    try {
+        const accessToken =  user.generateAccessToken()
+        const refreshToken =  user.generateRefreshToken()
+        user.refreshToken = refreshToken
+        await user.save({validateBeforeSave:true})
+        return {accessToken,refreshToken}
 
+    } catch (error) {
+        throw new ApiError(400,error?.message || "Invalid Request")
+    }
+}
 const userLogin = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    console.log(req.body)
+    // console.log(req.body)
     // Find the user by email
     const user = await User.findOne({ email });
 
@@ -48,21 +62,38 @@ const userLogin = asyncHandler(async (req, res) => {
     }
 
     // Compare the provided password with the stored hashed password
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    const isValid =  await user.isValidPassword(password)
 
-    if (!isValidPassword) {
+    if (!isValid) {
         throw new ApiError(401, "Invalid credentials");
     }
 
     //Generate a Token
-
-
+    const {accessToken,refreshToken} =  await generateTokens(user._id);
     // Send the response
-    res.status(200).json(
+
+    res.status(200).cookie("accessToken",accessToken,options).cookie("refreshToken",refreshToken,options).json(
         new ApiResponse(200, "Logged in successfully",)
     );
 });
 
+const userLogout = asyncHandler(async(req,res)=>{
+    User.findOneAndUpdate(
+        req.user._id,
+        {
+            refreshToken:undefined
+        },{
+            new:true
+        }
+    )
+    return res.status(200)
+    .clearCookie("accessToken",options)
+    .clearCookie("refreshToken",options)
+    .json(
+        new ApiResponse(200,"User logged OUT")
+    )
+})
+
 export {
-    registerUser,userLogin
+    registerUser,userLogin,userLogout
 }
