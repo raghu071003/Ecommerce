@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { options } from '../constants.js';
+import { Product } from '../models/product.model.js';
 
 
 const registerUser = asyncHandler(async(req,res)=>{
@@ -56,22 +57,17 @@ const userLogin = asyncHandler(async (req, res) => {
     // console.log(req.body)
     // Find the user by email
     const user = await User.findOne({ email });
-
     if (!user) {
         throw new ApiError(401, "Invalid credentials");
     }
-
     // Compare the provided password with the stored hashed password
     const isValid =  await user.isValidPassword(password)
-
     if (!isValid) {
         throw new ApiError(401, "Invalid credentials");
     }
-
     //Generate a Token
     const {accessToken,refreshToken} =  await generateTokens(user._id);
     // Send the response
-
     res.status(200).cookie("accessToken",accessToken,options).cookie("refreshToken",refreshToken,options).json(
         new ApiResponse(200, "Logged in successfully",)
     );
@@ -93,7 +89,43 @@ const userLogout = asyncHandler(async(req,res)=>{
         new ApiResponse(200,"User logged OUT")
     )
 })
+const getProducts = asyncHandler(async(req,res)=>{
+    try {
+        const products = await Product.find()
+        res.status(200).json(products)
+    } catch (error) {
+        throw new ApiError(500,"Failed to retrive data!")
+    }
+})
 
+const searchProduct = asyncHandler(async(req,res)=>{
+    const {query} = req.params;
+    
+    try {
+        const results =await  Product.find({
+            name:RegExp(query,'i')   
+        })
+        // console.log(results)
+        return res.status(201).json({
+            data:results
+        })
+    } catch (error) {
+        console.log(error);
+        
+        throw new Error(500)
+    }
+
+})
+
+const getProduct = asyncHandler(async(req,res)=>{
+    const {productId} = req.params;
+    
+    const product = await Product.findById(productId);
+    if(!product) {
+        throw new ApiError(404,"Requested Product Not Found!!")
+    }
+    return res.status(200,"Product FOund!").json(product)
+})
 export {
-    registerUser,userLogin,userLogout
+    registerUser,userLogin,userLogout,getProducts,searchProduct,getProduct
 }

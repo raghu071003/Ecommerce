@@ -2,6 +2,7 @@ import React from 'react';
 import { ShoppingCart, Search, Menu } from 'lucide-react';
 import Hero from '../components/Hero';
 import ProductGrid from '../components/ProductGrid';
+import { Footer } from '../components/Footer';
 
 
 const HomePage = () => (
@@ -10,9 +11,7 @@ const HomePage = () => (
       <Hero />
       <ProductGrid />
     </main>
-    <footer className="bg-gray-800 text-white py-4 text-center">
-      <p>&copy; 2024 E-Shop. All rights reserved.</p>
-    </footer>
+    <Footer/>
   </div>
 );
 

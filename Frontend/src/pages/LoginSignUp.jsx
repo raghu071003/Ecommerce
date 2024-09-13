@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from "axios"
 import { Navigate, useNavigate } from 'react-router';
+import { useContext } from 'react';
+import { AuthContext } from '../Context/AuthContext';
 const AuthComponent = () => {
   const [activeTab, setActiveTab] = useState('login');
   const [email, setEmail] = useState('');
@@ -10,6 +12,7 @@ const AuthComponent = () => {
   const [mobile,setMobile] = useState();
   const [loading,setIsLoading] = useState(false)
   const navigate = useNavigate();
+  const {isAdmin,setisAdmin} = useContext(AuthContext)
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -22,6 +25,7 @@ const AuthComponent = () => {
           headers: {
             'Content-Type': 'application/json',
           },
+          withCredentials: true,
         }
       );
       

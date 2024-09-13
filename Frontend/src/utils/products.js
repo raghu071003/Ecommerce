@@ -8,4 +8,4 @@ export const products = [
         { id: 7, name: 'Dragon Ball Z Saiyan T-Shirt', price: 23.99, image: '/api/placeholder/200/200', type: 'T-Shirt' },
         { id: 8, name: 'Demon Slayer Nezuko Dress', price: 41.99, image: '/api/placeholder/200/200', type: 'Dress' },
       ];
-      
+        
