@@ -2,19 +2,25 @@ import './App.css'
 import AuthComponent from './pages/LoginSignUp'
 import HomePage from './pages/HomePage'
 import Navbar from './components/Navbar'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import AddProductForm from './components/AddProduct'
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'
+import AddProductForm from '../../Admin_frntENd/src/Components/AddProduct'
 import Product from './components/Product'
 import ContactUs from './pages/ContactUs'
 import { Footer } from './components/Footer'
-import AdminLoginPage from './pages/Admin'
-import AdminDashboard from './pages/AdminDashboard'
-import { AuthContext } from './Context/AuthContext'
+import AdminLoginPage from '../../Admin_frntENd/src/Pages/Admin'
+import AdminDashboard from '../../Admin_frntENd/src/Pages/AdminDashboard'
+import { useAuth } from './Context/AuthContext'
 import { useContext } from 'react'
+import Profile from './pages/Profile'
+import SearchPage from './pages/SearchPage'
+import CartComponent from './components/Cart'
 
 function App() {
 
-  const { isAdmin } = useContext(AuthContext)
+  // const { isAdmin,isLogged } = useContext(useAuth)
+  // const navigate = useNavigate()
+  // console.log(isLogged);
+  
   return (
     <>
       <Router>
@@ -30,11 +36,9 @@ function App() {
               <Route path='/product/:id' element={<Product />} />
               <Route path='/contact' element={<ContactUs />} />
               <Route path='/admin' element={<AdminLoginPage />} />
-            //secure Routes
-
-              <Route path='/admin/dashboard' element={isAdmin?<AdminDashboard />:<p>Invalid Request</p>} />
-              <Route path='/admin/addProduct' element={isAdmin?<AddProductForm />:<p>Invalid Request</p>} />
-
+              <Route path='/profile' element={<Profile />} />
+              <Route path='/search/:query' element={<SearchPage/>}/>
+              <Route path ="/cart" element={<CartComponent/>}/>
             </Routes>
           </div>
 

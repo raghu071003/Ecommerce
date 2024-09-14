@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // For navigation after login or signup
 import axios from 'axios';
-import { AuthContext } from '../Context/AuthContext';
 function AdminLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -12,12 +11,12 @@ function AdminLoginPage() {
   const [address,setAddress] = useState('');
   const [number,setNumber] = useState('')
   const navigate = useNavigate();
-  const {isAdmin,setisAdmin} = useContext(AuthContext)
+  // const {isAdmin,setisAdmin} = useContext(AuthContext)
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    console.log(isAdmin);
+    // console.log(isAdmin);
     
     try {
       if (isSignup) {
@@ -33,7 +32,7 @@ function AdminLoginPage() {
         const response = await axios.post('http://localhost:8090/api/v1/admin/login', { email, password },{withCredentials:true});
         setMessage('Login successful!');
         if(response.status === 200){
-            setisAdmin(true)
+            // setisAdmin(true)
         }
         navigate('/admin/dashboard'); // Redirect to admin dashboard or another page
       }

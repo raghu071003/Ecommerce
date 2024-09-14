@@ -1,40 +1,52 @@
-// src/components/AddProductForm.js
 import React, { useState } from 'react';
-import { categories } from '../utils/categories';
+import { categories } from '../../../Frontend/src/utils/categories';
 import axios from 'axios';
 
 function AddProductForm() {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
+  const [sellPrice, setsellPrice] = useState('');
   const [category, setCategory] = useState('');
   const [stock, setStock] = useState('');
+  const [desc, setDesc] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [frontImage, setFrontImage] = useState(null);
   const [backImage, setBackImage] = useState(null);
 
   const handleFrontImage = (e) => {
-    setFrontImage(e.target.files[0]); // Set the first file from the file input
+    setFrontImage(e.target.files[0]);
   };
 
   const handleBackImage = (e) => {
-    setBackImage(e.target.files[0]); // Set the first file from the file input
+    setBackImage(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    if(stock <10) {
-        setMessage("stock shouldnt be less than 10!")
-        setLoading(false)
-        return
 
+    // Validate stock
+    if (Number(stock) < 10) {
+      setMessage("Stock shouldn't be less than 10!");
+      setLoading(false);
+      return;
     }
+
+    // Validate category
+    if (!categories.includes(category)) {
+      setMessage("Invalid category selected!");
+      setLoading(false);
+      return;
+    }
+
     const formData = new FormData();
     formData.append('name', name);
     formData.append('price', price);
-    // formData.append('category', "");
+    formData.append('sellPrice',sellPrice)
+    formData.append('category', category);
     formData.append('stock', stock);
+    formData.append('desc', desc);
     if (frontImage) formData.append('front', frontImage);
     if (backImage) formData.append('back', backImage);
 
@@ -78,11 +90,25 @@ function AddProductForm() {
         <div>
           <label className="block text-sm font-medium text-gray-700">Price</label>
           <input
-            type="text"
+            type="number"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
             className="mt-1 p-2 border border-gray-300 rounded-md w-full"
             required
+            min="0"
+            step="0.01" // Allows decimal values for price
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">SellPrice</label>
+          <input
+            type="number"
+            value={sellPrice}
+            onChange={(e) => setsellPrice(e.target.value)}
+            className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+            required
+            min="0"
+            step="0.01" // Allows decimal values for price
           />
         </div>
 
@@ -112,21 +138,35 @@ function AddProductForm() {
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             className="mt-1 p-2 border border-gray-300 rounded-md w-full"
-            required>
-                {categories.map((item,idx)=>{
-                    return <option value={item}>{item}</option>
-                })}
-        </select>
+            required
+          >
+            <option value="" disabled>Select a category</option>
+            {categories.map((item, idx) => (
+              <option key={idx} value={item}>{item}</option>
+            ))}
+          </select>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700">Stock</label>
           <input
-            type="text"
+            type="number"
             value={stock}
             onChange={(e) => setStock(e.target.value)}
             className="mt-1 p-2 border border-gray-300 rounded-md w-full"
             required
+            min="0"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Description</label>
+          <input
+            type="text"
+            value={desc}
+            onChange={(e) => setDesc(e.target.value)}
+            className="mt-1 p-2 border border-gray-300 rounded-md w-full"
+            required
+            min="0"
           />
         </div>
 

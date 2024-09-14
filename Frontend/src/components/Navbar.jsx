@@ -4,7 +4,8 @@ import { NavLink } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import SmallProduct from './smallProduct'; // Ensure the path matches your file structure
-import { AuthContext } from '../Context/AuthContext';
+import { useAuth } from '../Context/AuthContext';
+import logo from "../assets/Logo.png"
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const Navbar = () => {
   const [query, setQuery] = useState("");
   const [data, setData] = useState([]);
   const [searching, setSearching] = useState(false);
-  const { isAdmin } = useContext(AuthContext)
+  const { isAdmin } = useAuth()
 
   // Fetch data whenever the query changes
   useEffect(() => {
@@ -26,18 +27,32 @@ const Navbar = () => {
       try {
         const res = await axios.get(`http://localhost:8090/api/v1/user/search/${query}`);
         setData(res.data);
+        
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
         setSearching(true);
       }
     };
+    
 
     fetchData();
+    setTimeout(()=>(setSearching(false)),5000)
   }, [query]);
+ 
+
+  const handleSearch = ()=>{
+    if(!query.trim() !== "" && query.length !== 0){
+      navigate(`/search/${query}`)
+      setSearching(false)
+    }
+      
+  }
+  
 
   const handleChange = (e) => {
     setQuery(e.target.value);
+    
   };
 
   const handleLogout = async () => {
@@ -47,6 +62,7 @@ const Navbar = () => {
       });
       if (res.data.statusCode === 200) {
         navigate("/login");
+        setSearching(false)
       }
     } catch (error) {
       console.error("Error during logout:", error);
@@ -54,17 +70,17 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gray-800 shadow-md">
+    <nav className="bg-gray-800 shadow-md" onClick={()=>setSearching(false)}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <span className="text-2xl font-bold text-orange-400">YourStore</span>
+            <div className="flex-shrink-0 relative m-3 cursor-pointer" onClick={()=>navigate("/")}>
+              <img src={logo} alt="" className='w-16'/>
+              <p className='absolute top-6 left-4 text-white cur-font font-bold text-xl'>AniClothing</p>
             </div>
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
                 {!isAdmin &&
-
                   <>
                     <NavLink to="/" className="text-white hover:border-b border-orange-400 px-3 py-2 text-sm font-medium">Home</NavLink>
                     <NavLink to="/products" className="text-white hover:border-b border-orange-400 px-3 py-2 text-sm font-medium">Products</NavLink>
@@ -86,22 +102,25 @@ const Navbar = () => {
                 value={query}
                 placeholder="Search..."
               />
-                  <button>
-                    <Search className='h-8 w-6 bg-white rounded-r-xl p-1 mr-3' />
+                  <button onClick={handleSearch}>
+                    <Search className='h-8 w-8 bg-white rounded-r-xl p-1 mr-3' />
                   </button>
-                  {searching && (
+                  {searching &&(
                     <div className="absolute bg-white rounded-xl shadow-lg mt-2 w-full max-w-xs top-14 p-3" >
+                      
                       {data && data.data && data.data.length > 0 ? (
                         data.data.map((item) => (
                           <SmallProduct
-                            key={item.id} // Ensure `id` or a unique key is used
+                            key={item._id} // Ensure `id` or a unique key is used
+                            id = {item._id}
                             name={item.name}
                             price={item.price}
                             image={item.image[0]}
                           />
                         ))
+
                       )
-                        : ""}
+                        : "No Results Found"}
 
                     </div>
                   )}
@@ -109,7 +128,7 @@ const Navbar = () => {
               }
 
               {!isAdmin &&
-                <button className="p-1 rounded-full text-white hover:text-orange-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-white">
+                <button className="p-1 rounded-full text-white hover:text-orange-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-white" onClick={()=>navigate("/cart")}>
                   <ShoppingCart className="h-6 w-6" />
                 </button>
               }
@@ -121,7 +140,7 @@ const Navbar = () => {
               </button>
               {userMenu && (
                 <div className='absolute bg-gray-800 right-0 top-14 text-white p-3 rounded-xl flex flex-col items-center justify-center gap-3'>
-                  <NavLink to="/profile" className='text-xl border-b'>Profile</NavLink>
+                  <NavLink to="/profile" className='text-xl border-b' onClick={()=>navigate("/profile")}>Profile</NavLink>
                   <NavLink to="#" className='text-xl border-b' onClick={handleLogout}>Logout</NavLink>
                 </div>
               )}
@@ -165,7 +184,7 @@ const Navbar = () => {
               </button>
               {userMenu && (
                 <div className='absolute bg-gray-800 right-0 top-14 text-white p-3 rounded-xl gap-3'>
-                  <NavLink to="/profile" className='text-xl border-b'>Profile</NavLink>
+                  <NavLink to="/profile" className='text-xl border-b' onClick={()=>navigate("/profile")}>Profile</NavLink>
                   <NavLink to="#" className='text-xl border-b' onClick={handleLogout}>Logout</NavLink>
                 </div>
               )}

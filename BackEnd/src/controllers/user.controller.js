@@ -67,6 +67,7 @@ const userLogin = asyncHandler(async (req, res) => {
     }
     //Generate a Token
     const {accessToken,refreshToken} =  await generateTokens(user._id);
+       
     // Send the response
     res.status(200).cookie("accessToken",accessToken,options).cookie("refreshToken",refreshToken,options).json(
         new ApiResponse(200, "Logged in successfully",)
@@ -90,6 +91,8 @@ const userLogout = asyncHandler(async(req,res)=>{
     )
 })
 const getProducts = asyncHandler(async(req,res)=>{
+    // console.log(req.session.userId);
+    
     try {
         const products = await Product.find()
         res.status(200).json(products)
@@ -126,6 +129,89 @@ const getProduct = asyncHandler(async(req,res)=>{
     }
     return res.status(200,"Product FOund!").json(product)
 })
+
+const userProfile = asyncHandler(async (req, res) => {
+    
+    // const userId = req.user._id;
+    // if (!userId) {
+    //     return res.status(400).json(new ApiResponse(400, null, "User ID is missing"));
+    // }
+
+    // Fetch user profile from the database
+    const user = await User.findOne(req.user._id);
+
+    // Check if the user exists
+    if (!user) {
+        return res.status(404).json(new ApiResponse(404, null, "User not found"));
+    }
+
+    // Exclude sensitive information from the response
+    const userProfile = {
+        _id: user._id,
+        email: user.email,
+        fullName: user.fullName,
+        mobile: user.mobile,
+        cart:user.cart
+        // Add any other fields you need
+    };
+
+    // Send response
+    return res.status(200).json(new ApiResponse(200, userProfile, "User profile fetched successfully"));
+});
+
+
+const updateCart = asyncHandler(async (req, res) => {
+
+    const cart = req.body;
+    // console.log(req.user._id);
+    console.log(cart);
+    
+    try {
+      
+      // Ensure the item is valid
+      if (!cart) {
+        return res.status(400).json({ message: 'Invalid item data' });
+      }
+  
+      // Find the user by their ID (assuming req.user._id is set from authentication middleware)
+      const user = await User.findOneAndUpdate(
+        req.user._id,
+        {
+            cart:cart
+        },{
+            new:true
+        }
+    )
+  
+      // Respond with the updated cart
+      res.status(200).json(user);
+  
+    } catch (error) {
+      console.error('Error updating cart:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+
+const rateProduct= asyncHandler(async(req,res)=>{
+    const { productId } = req.params;
+    const user = await User.findOne(req.user._id).select("-password -refreshToken")
+    const { comment, rating } = req.body;
+
+  const product = await Product.findById(productId);
+  if (!product) {
+    return res.status(404).json({ message: 'Product not found' });
+  }
+  product.reviews.push({ user:user.fullName, comment, rating });
+  
+  // Calculate the average rating
+  const totalRating = product.reviews.reduce((acc, review) => acc + review.rating, 0);
+  product.rating = totalRating / product.reviews.length;
+
+  await product.save();
+  res.status(201).json(product);
+
+
+})
 export {
-    registerUser,userLogin,userLogout,getProducts,searchProduct,getProduct
+    registerUser,userLogin,userLogout,getProducts,searchProduct,getProduct,userProfile,rateProduct,updateCart
 }

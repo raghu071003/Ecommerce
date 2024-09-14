@@ -1,6 +1,22 @@
 import mongoose,{Schema} from "mongoose";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
+// import { Product } from "./product.model";
+const cartItemSchema = new Schema({
+    product: {
+        type:[String],
+        
+    },
+    quantity: Number,
+    size: String,
+    image:{
+        type:String,
+        required:true
+    },price:{
+        type:String,
+        required:true
+    },
+  });
 
 const userSchema = new Schema({
     email:{
@@ -27,6 +43,12 @@ const userSchema = new Schema({
     },
     refreshToken:{
         type:String
+    },
+    cart:{
+        type:[cartItemSchema]
+    },
+    address:{
+        type:String,
     }
 },{timestamps:true})
 

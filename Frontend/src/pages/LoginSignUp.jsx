@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from "axios"
 import { Navigate, useNavigate } from 'react-router';
 import { useContext } from 'react';
-import { AuthContext } from '../Context/AuthContext';
+// import { AuthContext } from '../Context/AuthContext';
 const AuthComponent = () => {
   const [activeTab, setActiveTab] = useState('login');
   const [email, setEmail] = useState('');
@@ -12,7 +12,7 @@ const AuthComponent = () => {
   const [mobile,setMobile] = useState();
   const [loading,setIsLoading] = useState(false)
   const navigate = useNavigate();
-  const {isAdmin,setisAdmin} = useContext(AuthContext)
+  // const {isLogged, setIsLoggedIn} = useContext(AuthContext)
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -31,7 +31,10 @@ const AuthComponent = () => {
       
       if (response.data && response.status === 200) {
         setMessage('Login successful!');
+        // setIsLoggedIn(true)
         navigate('/');
+        console.log(isLogged);
+        
         // Handle successful login (e.g., store token, redirect)
       } else {
         setMessage('Login failed. Please check your credentials.');

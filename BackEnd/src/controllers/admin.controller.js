@@ -9,13 +9,11 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { options } from "../constants.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 
 const addProduct = asyncHandler(async(req,res)=>{
-    console.log(req.body)
-    const {name,price,category,seller} = req.body
+    const owner = await Seller.findOne(req.user._id).select("-password -refreshToken")
+    const {name,price,category,seller,desc,sellPrice} = req.body
     // console.log(req.files)
     const frontLocalPath = req.files?.front[0].path
     const backLocalPath = req.files?.back[0].path
@@ -29,7 +27,10 @@ const addProduct = asyncHandler(async(req,res)=>{
         price,
         category,
         seller,
-        image:[front.url,back.url]
+        sellPrice,
+        image:[front.url,back.url],
+        description:desc,
+        owner
     })
 
     const prodctCreated = await Product.findById(product._id)
@@ -46,7 +47,7 @@ const adminLogin = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     // console.log(req.body)
     // Find the user by email
-    console.log(password);
+    // console.log(password);
     
     const seller = await Seller.findOne({ email });
     if (!seller) {
@@ -60,7 +61,7 @@ const adminLogin = asyncHandler(async (req, res) => {
     //Generate a Token
     const {accessToken,refreshToken} =  await generateTokens(seller._id);
     // Send the response
-    res.status(200).cookie("accessToken",accessToken,options).cookie("refreshToken",refreshToken,options).json(
+    res.status(200).cookie("accessToken_admin",accessToken,options).cookie("refreshToken_admin",refreshToken,options).json(
         new ApiResponse(200, "Logged in successfully",)
     );
 });
