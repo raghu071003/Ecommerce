@@ -2,19 +2,17 @@ import axios from 'axios';
 import React, { useContext } from 'react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../Context/AuthContext';
+import LoginAlert from './LoginAlert';
 
 const Profile = () => {
   const [user, setUser] = useState(null);
-  const{cartItem,setcartItem} = useAuth()
   const fetchData =async () =>{
     
     const res = await axios.post("http://localhost:8090/api/v1/user/profile",{},{withCredentials:true})
 
     setUser(res.data.data)
-    setcartItem(user.cart)
-    // return res.data.data;
+
     }
-    console.log(cartItem);
     
 
   useEffect(() => {
@@ -51,7 +49,7 @@ const Profile = () => {
         </div>
       </div>
     
-    : <p>Please Login</p>}
+    : <LoginAlert/>}
     
     </>
     

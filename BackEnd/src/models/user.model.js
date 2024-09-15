@@ -49,6 +49,9 @@ const userSchema = new Schema({
     },
     address:{
         type:String,
+    },
+    history:{
+        type:[String],
     }
 },{timestamps:true})
 

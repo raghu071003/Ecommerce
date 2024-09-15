@@ -3,6 +3,7 @@ import { ShoppingCart, Search, Menu } from 'lucide-react';
 import Hero from '../components/Hero';
 import ProductGrid from '../components/ProductGrid';
 import { Footer } from '../components/Footer';
+import History from '../components/History';
 
 
 const HomePage = () => (
@@ -11,6 +12,7 @@ const HomePage = () => (
       <Hero />
       <ProductGrid />
     </main>
+    <History />
     <Footer/>
   </div>
 );

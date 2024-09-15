@@ -8,16 +8,16 @@ const Product = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeImage, setActiveImage] = useState('');
-  const [quantity, setQuantity] = useState(1); // Default quantity
-  const [selectedSize, setSelectedSize] = useState(''); // Default size
-  const { id } = useParams(); // Fetch the product ID from the URL
-  const { cartItem, addToCart } = useAuth() // Ensure setcartItem is available
+  const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState('');
+  const { id } = useParams();
+  const { cartItem, addToCart } = useAuth()
 
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`http://localhost:8090/api/v1/user/product/${id}`);
+        const response = await axios.get(`http://localhost:8090/api/v1/user/product/${id}`,{withCredentials:true});
         setProduct(response.data);
         setActiveImage(response.data.image[0]);
       } catch (error) {
@@ -32,17 +32,14 @@ const Product = () => {
 
   const sizeOptions = ['S', 'M', 'L', 'XL', 'XXL'];
 
-  // Handle increment
   const incrementQuantity = () => {
     setQuantity((prevQuantity) => prevQuantity + 1);
   };
 
-  // Handle decrement
   const decrementQuantity = () => {
     setQuantity((prevQuantity) => Math.max(1, prevQuantity - 1));
   };
 
-  // Handle adding to cart
   const handleCart = () => {
     setLoading(true)
     if (!selectedSize) {
@@ -53,12 +50,7 @@ const Product = () => {
 
     const newItem = { id:product._id, quantity, size:selectedSize,price:product.price,image:product.image[0] };
     addToCart(newItem)
-    // console.log(cartItem);
     setLoading(false)
-
-
-    // Optional: Log to console or provide user feedback
-    console.log('Item added to cart:', newItem);
   };
 
   // if (loading) return <p className="text-center text-lg font-semibold">Loading...</p>;
@@ -88,7 +80,7 @@ const Product = () => {
         </div>
         <div className='flex flex-col'>
           <h1 className='text-3xl font-bold mb-4'>{product.name}</h1>
-          <p className='text-xl text-gray-800 mb-4 font-bold'>₹{product.price}</p>
+          <p className='text-xl text-gray-800 mb-4 font-bold'>₹{product.price}<span className='text-sm text-semibold m-3'>includes 5% off </span></p>
           <p className='text-sm text-gray-800 mb-4 line-through'>₹{product.sellPrice}</p>
           <p className='text-gray-600 mb-6'>{product.description || 'No description available'}</p>
 
@@ -165,6 +157,7 @@ const Product = () => {
             </button>
             <button 
               className='bg-gray-800 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-300 ease-in-out'
+              onClick={`/checkout/${product._id}`}
             >
               Buy Now
             </button>

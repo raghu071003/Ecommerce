@@ -3,7 +3,7 @@ import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 
 export const Footer = () => {
   return (
-    <footer className="bg-gray-800 text-white py-4 text-center">
+    <footer className="bg-gray-800 text-white py-4 text-center border-t">
       <div className="container mx-auto">
         <p className="mb-4">&copy; 2024 TheAniClothing. All rights reserved.</p>
         <div className="flex justify-center space-x-4">

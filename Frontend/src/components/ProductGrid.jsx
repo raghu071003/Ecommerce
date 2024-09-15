@@ -11,10 +11,18 @@ const ProductGrid = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8090/api/v1/user/products',{
-          withCredentials:true
+        const response = await axios.get('http://localhost:8090/api/v1/user/products', {
+          withCredentials: true
         });
-        setProducts(response.data);
+        const productList = response.data;
+
+        // Shuffle the products array
+        const shuffledProducts = productList.sort(() => Math.random() - 0.5);
+
+        // Get the first 6 products from the shuffled array
+        const selectedProducts = shuffledProducts.slice(0, 6);
+
+        setProducts(selectedProducts);
       } catch (error) {
         setError('Failed to fetch products');
       } finally {
@@ -23,15 +31,15 @@ const ProductGrid = () => {
     };
 
     fetchData();
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, []);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
   return (
-    <section className="py-16">
+    <section className="py-16 bg-gray-800">
       <div className="container mx-auto">
-        <h2 className="text-3xl font-bold mb-8 text-center">Featured Products</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center text-white">Featured Products</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {products.map((product) => (
             <div
@@ -44,8 +52,11 @@ const ProductGrid = () => {
                 alt={product.name}
                 className="w-full h-48 object-contain mb-4 rounded"
               />
-              <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
-              <p className="text-gray-600 mb-4">₹{product.price}</p>
+              <h3 className="text-xl font-semibold mb-2 truncate w-48">{product.name}</h3>
+              <div className='flex gap-3'>
+              <p className="text-gray-600 mb-4 font-bold">₹{product.price}</p>
+              <p className="text-gray-600 mb-4 font-semibold line-through">₹{product.sellPrice}</p>
+              </div>
               <button className="bg-orange-400 text-white px-4 py-2 rounded hover:bg-orange-500 transition duration-300">
                 Add to Cart
               </button>

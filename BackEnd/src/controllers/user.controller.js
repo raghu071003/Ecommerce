@@ -101,28 +101,63 @@ const getProducts = asyncHandler(async(req,res)=>{
     }
 })
 
-const searchProduct = asyncHandler(async(req,res)=>{
-    const {query} = req.params;
+const searchProduct = asyncHandler(async (req, res) => {
+    const { query } = req.params;
     
     try {
-        const results =await  Product.find({
-            name:RegExp(query,'i')   
-        })
-        // console.log(results)
-        return res.status(201).json({
-            data:results
-        })
-    } catch (error) {
-        console.log(error);
+        // Split the query into keywords
+        const keywords = query.split(/\s+/).filter(keyword => keyword.length > 0);
         
-        throw new Error(500)
+        // Create a regex pattern for each keyword
+        const regexPatterns = keywords.map(keyword => new RegExp(keyword, 'i'));
+        
+        // Create the search query
+        const searchQuery = {
+            $and: regexPatterns.map(pattern => ({
+                $or: [
+                    { name: pattern },
+                    { description: pattern },
+                    { category: pattern }
+                    
+                ]
+            }))
+        };
+
+        const results = await Product.find(searchQuery);
+
+        return res.status(200).json({
+            success: true,
+            count: results.length,
+            data: results
+        });
+    } catch (error) {
+        console.error('Search error:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'An error occurred while searching for products'
+        });
     }
+});
 
-})
-
-const getProduct = asyncHandler(async(req,res)=>{
+const getProduct = asyncHandler(async(req,res)=>{           
+    // const user = await User.findOne(req.user._id);
+    const user = await User.findOne(req.user._id);
     const {productId} = req.params;
+    const prod = await Product.findById(productId)
+    if(user){
+        if (!Array.isArray(user.history)) {
+            user.history = [];
+          }
+          const obj = productId+" "+prod.image[0];
+          // Add productId to user history if it doesn't already exist
+          if (!user.history.includes(obj)) {
+            user.history.push(obj)
+
+          }
+          await user.save();
+    }
     
+      
     const product = await Product.findById(productId);
     if(!product) {
         throw new ApiError(404,"Requested Product Not Found!!")
@@ -151,7 +186,8 @@ const userProfile = asyncHandler(async (req, res) => {
         email: user.email,
         fullName: user.fullName,
         mobile: user.mobile,
-        cart:user.cart
+        cart:user.cart,
+        history:user.history
         // Add any other fields you need
     };
 
@@ -164,7 +200,7 @@ const updateCart = asyncHandler(async (req, res) => {
 
     const cart = req.body;
     // console.log(req.user._id);
-    console.log(cart);
+    // console.log(cart);
     
     try {
       
@@ -212,6 +248,43 @@ const rateProduct= asyncHandler(async(req,res)=>{
 
 
 })
+
+const getCategory = asyncHandler(async(req,res)=>{
+    const { category } = req.params;
+    const { sort } = req.query; // Sorting parameter from the query string
+  
+    // Define sorting criteria based on the 'sort' query parameter
+    let sortCriteria = {};
+    if (sort === 'price-asc') {
+      sortCriteria = { price: 1 }; // Ascending order
+    } else if (sort === 'price-desc') {
+      sortCriteria = { price: -1 }; // Descending order
+    } else if (sort === 'name-asc') {
+      sortCriteria = { name: 1 }; // Ascending order
+    } else if (sort === 'name-desc') {
+      sortCriteria = { name: -1 }; // Descending order
+    }
+  
+    try {
+      // Fetch products from the database based on category and sort criteria
+      const products = await Product.find({ category }).sort(sortCriteria);
+      res.json(products);
+    } catch (err) {
+      console.error('Error fetching products:', err);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+})
+
+const sendStatus = asyncHandler(async(req,res)=>{
+    const user = await User.findOne(req.user._id).select("-password -refreshToken")
+    if(!user){
+        throw new ApiError(402,"Please Login")
+    }
+    return res.status(200).json({
+        isLoggedIn:true,
+        user:user
+    })
+})
 export {
-    registerUser,userLogin,userLogout,getProducts,searchProduct,getProduct,userProfile,rateProduct,updateCart
+    registerUser,userLogin,userLogout,getProducts,searchProduct,getProduct,userProfile,rateProduct,updateCart,sendStatus,getCategory
 }

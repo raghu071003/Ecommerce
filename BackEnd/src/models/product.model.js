@@ -31,7 +31,7 @@ const productSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        // required: true
+        required: true
       },
     image:{
         type:[String],
@@ -39,7 +39,7 @@ const productSchema = new mongoose.Schema({
     },
     category:{
         type : String,
-        enum :["T-Shirt","Hoody","Jeans","Shoes"]
+        enum :["T-Shirt","Hoodies","Jeans","Shoes"]
         // required : true
     },
     stock: {
@@ -61,5 +61,5 @@ const productSchema = new mongoose.Schema({
 
 
 
-
+export  {productSchema}
 export const Product = mongoose.model("Product",productSchema)

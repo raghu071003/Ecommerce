@@ -1,75 +1,28 @@
-import React from 'react'
-import axios from 'axios'
+import React, { useState } from 'react';
+// import ShirtModel from '../components/ShirtModel';
 
-const DesignShirt = async() => {
+const DesignPage = () => {
+  const [color, setColor] = useState('#ffffff');
 
-// const options = {
-//   method: 'GET',
-//   url: 'https://img4me.p.rapidapi.com/',
-//   params: {
-//     text: 'Test Me',
-//     font: 'trebuchet',
-//     size: '12',
-//     fcolor: '000000',
-//     bcolor: 'FFFFFF',
-//     type: 'png'
-//   },
-//   headers: {
-//     'x-rapidapi-key': '8405a41742msh8a09513a4d32c59p15eb66jsna6c8db25d489',
-//     'x-rapidapi-host': 'img4me.p.rapidapi.com'
-//   }
-// };
-const options = {
-    method: 'POST',
-    url: 'https://ai-text-to-image-generator-api.p.rapidapi.com/realistic',
-    headers: {
-      'x-rapidapi-key': '8405a41742msh8a09513a4d32c59p15eb66jsna6c8db25d489',
-      'x-rapidapi-host': 'ai-text-to-image-generator-api.p.rapidapi.com',
-      'Content-Type': 'application/json'
-    },
-    data: {
-      inputs: 'Find serenity in the tranquil elegance of a solitary sailboat drifting on a glassy lake at sunset'
-    }
-  };
-  
-  try {
-      const response = await axios.request(options);
-      console.log(response.data);
-  } catch (error) {
-      
-
-// try {
-// 	const response = await axios.request(options);
-// 	console.log(response.data);
-// } catch (error) {
-// 	console.error(error);
-// }
-//     const generateImage = async (prompt) => {
-//         try {
-//           const response = await axios.post('https://api.openai.com/v1/images/generations', {
-//             prompt: prompt,
-//             n: 1,
-//             size: "1024x1024",
-//           }, {
-//             headers: {
-//               'Authorization': `Bearer YOUR_API_KEY`,
-//               'Content-Type': 'application/json',
-//             },
-//           });
-      
-//           return response.data.data[0].url; // URL of the generated image
-//         } catch (error) {
-//           console.error('Error generating image:', error);
-//         }
-//       };
-      
-//       // Example usage
-//       generateImage('A minimalist design of a mountain range in pastel colors')
-//         .then(url => console.log('Generated image URL:', url));
   return (
-    <div>DesignShirt</div>
-  )
-}
-}
+    <div className="container mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-4">3D Shirt Designer</h1>
 
-export default DesignShirt
+      <div className="flex flex-col items-center mb-4">
+        {/* <ShirtModel color={color} /> */}
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-lg font-medium mb-2">Select Shirt Color:</label>
+        <input
+          type="color"
+          value={color}
+          onChange={(e) => setColor(e.target.value)}
+          className="w-16 h-16"
+        />
+      </div>
+    </div>
+  );
+};
+
+export default DesignPage;

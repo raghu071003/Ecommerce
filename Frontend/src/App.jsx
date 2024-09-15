@@ -10,16 +10,19 @@ import { Footer } from './components/Footer'
 import AdminLoginPage from '../../Admin_frntENd/src/Pages/Admin'
 import AdminDashboard from '../../Admin_frntENd/src/Pages/AdminDashboard'
 import { useAuth } from './Context/AuthContext'
-import { useContext } from 'react'
 import Profile from './pages/Profile'
 import SearchPage from './pages/SearchPage'
 import CartComponent from './components/Cart'
+import Categories from './pages/Categories'
+import Checkout from './pages/CheckOut'
+import DesignShirt from './pages/DesignShirt'
 
 function App() {
 
   // const { isAdmin,isLogged } = useContext(useAuth)
   // const navigate = useNavigate()
   // console.log(isLogged);
+  const {isLogged} = useAuth()
   
   return (
     <>
@@ -39,6 +42,10 @@ function App() {
               <Route path='/profile' element={<Profile />} />
               <Route path='/search/:query' element={<SearchPage/>}/>
               <Route path ="/cart" element={<CartComponent/>}/>
+              <Route path="/categories" element={<Categories />}/>
+              <Route path="/checkoutCart" element={<Checkout />}/>
+              <Route path="/checkoutCart/:id" element={<Checkout />}/>
+              <Route path='/design' element={<DesignShirt />}/>
             </Routes>
           </div>
 

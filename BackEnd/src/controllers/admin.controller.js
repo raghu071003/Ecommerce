@@ -13,7 +13,7 @@ import { options } from "../constants.js";
 
 const addProduct = asyncHandler(async(req,res)=>{
     const owner = await Seller.findOne(req.user._id).select("-password -refreshToken")
-    const {name,price,category,seller,desc,sellPrice} = req.body
+    const {name,price,category,desc,sellPrice,size,stock} = req.body
     // console.log(req.files)
     const frontLocalPath = req.files?.front[0].path
     const backLocalPath = req.files?.back[0].path
@@ -26,11 +26,13 @@ const addProduct = asyncHandler(async(req,res)=>{
         name,
         price,
         category,
-        seller,
+        seller:owner._id,
         sellPrice,
         image:[front.url,back.url],
         description:desc,
-        owner
+        owner,
+        size,
+        stock
     })
 
     const prodctCreated = await Product.findById(product._id)
@@ -61,7 +63,7 @@ const adminLogin = asyncHandler(async (req, res) => {
     //Generate a Token
     const {accessToken,refreshToken} =  await generateTokens(seller._id);
     // Send the response
-    res.status(200).cookie("accessToken_admin",accessToken,options).cookie("refreshToken_admin",refreshToken,options).json(
+    res.status(200).cookie("accessToken",accessToken,options).cookie("refreshToken",refreshToken,options).json(
         new ApiResponse(200, "Logged in successfully",)
     );
 });
