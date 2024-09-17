@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '../Context/AuthContext';
 
 const Checkout = () => {
-  const [cartItems, setCartItems] = useState([
-    // This should be populated from your cart state or context
-    { id: 1, name: 'Product 1', quantity: 2, price: 100 },
-    { id: 2, name: 'Product 2', quantity: 1, price: 150 }
-  ]);
+  const id = useParams()
+  // const [cartItems, setCartItems] = useState([
+  //   // This should be populated from your cart state or context
+  //   { id: 1, name: 'Product 1', quantity: 2, price: 100 },
+  //   { id: 2, name: 'Product 2', quantity: 1, price: 150 }
+  // ]);
   const [shippingAddress, setShippingAddress] = useState('');
   const [paymentMethod, setPaymentMethod] = useState(''); // For example: 'Credit Card', 'PayPal'
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
+  const {cartItem} = useAuth()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,7 +40,7 @@ const Checkout = () => {
   };
 
   // Calculate total price
-  const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  const totalPrice = cartItem.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return (
     <div className="container mx-auto p-6 md:p-12">
@@ -47,7 +50,7 @@ const Checkout = () => {
         <div className="bg-gray-100 p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
           <ul className="space-y-4">
-            {cartItems.map(item => (
+            {cartItem.map(item => (
               <li key={item.id} className="flex justify-between">
                 <span>{item.name} x {item.quantity}</span>
                 <span>₹{item.price * item.quantity}</span>
@@ -93,7 +96,7 @@ const Checkout = () => {
                 onChange={(e) => setPaymentMethod(e.target.value)}
                 className="mr-2"
               />
-              PayPal
+              Upi
             </label>
           </div>
           {paymentMethod === 'Credit Card' && (
@@ -119,7 +122,7 @@ const Checkout = () => {
             </div>
           )}
           {paymentMethod === 'PayPal' && (
-            <p>Redirecting to PayPal...</p>
+            <p>Redirecting to Upi...</p>
           )}
         </div>
 

@@ -11,9 +11,7 @@ const ProductGrid = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8090/api/v1/user/products', {
-          withCredentials: true
-        });
+        const response = await axios.get('http://localhost:8090/api/v1/user/products');
         const productList = response.data;
 
         // Shuffle the products array
@@ -23,6 +21,8 @@ const ProductGrid = () => {
         const selectedProducts = shuffledProducts.slice(0, 6);
 
         setProducts(selectedProducts);
+        console.log(products);
+        
       } catch (error) {
         setError('Failed to fetch products');
       } finally {

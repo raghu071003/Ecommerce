@@ -28,5 +28,30 @@ const verifyJwt = asyncHandler(async(req,res,next)=>{
     }
 
 })
+const verifyJwt2 = asyncHandler(async(req,res,next)=>{
+    try {
+        const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ","")    
+        
+        if(!token){
+            next()
+            return;
+        }
+        const decodedToken = jwt.verify(token,process.env.ACCESS_TOKEN_SECRET)
+    
+        const user  = User.findById(decodedToken._id).select("-password -refreshToken");
+    
+        if(!user){
+            throw new ApiError(401,"Invalid Access Token");
+        }
+    
+        req.user = user
+        // console.log(user);
+        
+        next()
+    } catch (error) {
+        throw new ApiError(401, error?.message || "Something Went Wrong")
+    }
 
-export {verifyJwt};
+})
+
+export {verifyJwt,verifyJwt2};

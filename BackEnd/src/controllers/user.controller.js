@@ -141,22 +141,24 @@ const searchProduct = asyncHandler(async (req, res) => {
 
 const getProduct = asyncHandler(async(req,res)=>{           
     // const user = await User.findOne(req.user._id);
-    const user = await User.findOne(req.user._id);
     const {productId} = req.params;
-    const prod = await Product.findById(productId)
-    if(user){
-        if (!Array.isArray(user.history)) {
-            user.history = [];
-          }
-          const obj = productId+" "+prod.image[0];
-          // Add productId to user history if it doesn't already exist
-          if (!user.history.includes(obj)) {
-            user.history.push(obj)
 
-          }
-          await user.save();
-    }
+    const prod = await Product.findById(productId)
+    if(req.user){
+        const user = await User.findOne(req.user._id);
+        if(user){
+            if (!Array.isArray(user.history)) {
+                user.history = [];
+              }
+              const obj = productId+" "+prod.image[0];
+              // Add productId to user history if it doesn't already exist
+              if (!user.history.includes(obj)) {
+                user.history.push(obj)
     
+              }
+              await user.save();
+        }
+    }
       
     const product = await Product.findById(productId);
     if(!product) {
@@ -199,8 +201,6 @@ const userProfile = asyncHandler(async (req, res) => {
 const updateCart = asyncHandler(async (req, res) => {
 
     const cart = req.body;
-    // console.log(req.user._id);
-    // console.log(cart);
     
     try {
       
@@ -209,7 +209,6 @@ const updateCart = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: 'Invalid item data' });
       }
   
-      // Find the user by their ID (assuming req.user._id is set from authentication middleware)
       const user = await User.findOneAndUpdate(
         req.user._id,
         {

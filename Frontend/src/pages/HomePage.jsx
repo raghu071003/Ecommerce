@@ -4,17 +4,21 @@ import Hero from '../components/Hero';
 import ProductGrid from '../components/ProductGrid';
 import { Footer } from '../components/Footer';
 import History from '../components/History';
+import { useAuth } from '../Context/AuthContext';
 
-
-const HomePage = () => (
+const HomePage = () => {
+  
+  const {isLogged} = useAuth();
+  
+  return(
   <div className="min-h-screen flex flex-col">
     <main className="flex-grow">
       <Hero />
       <ProductGrid />
     </main>
-    <History />
+    {isLogged && <History />}
     <Footer/>
   </div>
-);
+)};
 
 export default HomePage;

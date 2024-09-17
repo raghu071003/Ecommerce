@@ -48,7 +48,7 @@ const Product = () => {
       return;
     }
 
-    const newItem = { id:product._id, quantity, size:selectedSize,price:product.price,image:product.image[0] };
+    const newItem = { id:product._id,name:product.name, quantity, size:selectedSize,price:product.price,image:product.image[0] };
     addToCart(newItem)
     setLoading(false)
   };

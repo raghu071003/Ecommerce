@@ -11,3 +11,40 @@ body{
 .cur-font{
     font-family: 'Dancing Script';
 }
+
+.hero-bg{
+    background-image: url('./assets/Bleach.jpg');
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* Define keyframes for fading in */
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  /* Define keyframes for fading out */
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  
+  /* Apply fade-in animation to background images */
+  .fade-in {
+    animation: fadeIn 1s ease-in-out;
+  }
+  
+  .fade-out {
+    animation: fadeOut 1s ease-in-out;
+  }
+  
