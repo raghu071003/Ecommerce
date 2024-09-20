@@ -24,7 +24,7 @@ const Item = ({ name, price, quantity, image,size,key }) => {
       
       {/* Details Section */}
       <div className="ml-6 flex-1">
-        <p className="text-xl font-semibold text-gray-900 truncate">{name}</p>
+        <p className="text-xl font-semibold text-gray-900 truncate w-32">{name}</p>
         <p className="text-lg font-bold text-gray-700 mt-1">₹{price}</p>
         <p className="text-sm text-gray-500 mt-2">Quantity: <span className="font-medium text-gray-800">{quantity}</span></p>
         <p className="text-sm text-gray-500 mt-2">Size: <span className="font-medium text-gray-800">{size}</span></p>

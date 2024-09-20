@@ -1,46 +1,70 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
 
 const Checkout = () => {
-  const id = useParams()
-  // const [cartItems, setCartItems] = useState([
-  //   // This should be populated from your cart state or context
-  //   { id: 1, name: 'Product 1', quantity: 2, price: 100 },
-  //   { id: 2, name: 'Product 2', quantity: 1, price: 150 }
-  // ]);
-  const [shippingAddress, setShippingAddress] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState(''); // For example: 'Credit Card', 'PayPal'
+  const { cartItem } = useAuth();
+  const [shippingAddress, setShippingAddress] = useState({});
+  const [paymentMethod, setPaymentMethod] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [address, setAddress] = useState([]);
   const navigate = useNavigate();
-  const {cartItem} = useAuth()
+
+  // Fetch user profile and addresses
+  const fetchUser = async () => {
+    try {
+      const res = await axios.post("http://localhost:8090/api/v1/user/profile", {}, { withCredentials: true });
+      setAddress(res.data.data.address);
+      // Automatically set the first address as the shipping address if available
+      if (res.data.data.address.length > 0) {
+        setShippingAddress(res.data.data.address[0]); // Set the entire address object
+      }
+    } catch (err) {
+      setError("Failed to fetch user data.");
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  // Calculate total price
+  const totalPrice = cartItem.reduce((total, item) => total + item.price * item.quantity, 0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
+    setSuccess('');
+
+    const orderData = {
+      address: shippingAddress, // Use the entire shipping address object
+      paymentMethod,
+      items: cartItem.map(item => ({
+        productId: item.id,
+        quantity: item.quantity,
+        price: item.price
+      })),
+      totalAmount: totalPrice
+    };
 
     try {
-      // Assuming you have an API endpoint to process orders
-      const response = await axios.post('http://localhost:8090/api/v1/checkout', {
-        cartItems,
-        shippingAddress,
-        paymentMethod
-      });
-      setSuccess('Order placed successfully!');
-      // Optionally, clear cart and navigate to a confirmation page
-      navigate('/confirmation');
+      const response = await axios.post('http://localhost:8090/api/v1/user/orders', orderData, { withCredentials: true });
+      if (response.status === 201) {
+        setSuccess('Order placed successfully!');
+        // Optionally navigate to a confirmation page
+        // navigate('/confirmation');
+      }
     } catch (error) {
+      console.error(error);
       setError('Failed to place order. Please try again.');
     } finally {
       setLoading(false);
     }
   };
-
-  // Calculate total price
-  const totalPrice = cartItem.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return (
     <div className="container mx-auto p-6 md:p-12">
@@ -65,14 +89,22 @@ const Checkout = () => {
 
         <div className="bg-gray-100 p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-semibold mb-4">Shipping Information</h2>
-          <input
-            type="text"
-            placeholder="Enter your shipping address"
-            value={shippingAddress}
-            onChange={(e) => setShippingAddress(e.target.value)}
+          <select
+            value={address.findIndex(addr => addr.House_No === shippingAddress.House_No)} // Find index based on House_No
+            onChange={(e) => {
+              const selectedAddress = address[e.target.value];
+              setShippingAddress(selectedAddress);
+            }}
             className="w-full p-3 border border-gray-300 rounded-md"
             required
-          />
+          >
+            <option value="" disabled>Select an address</option>
+            {address.map((item, index) => (
+              <option key={index} value={index}>
+                {`${item.House_No}, ${item.City}, ${item.State}, ${item.Pincode}`}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="bg-gray-100 p-6 rounded-lg shadow-md">
@@ -91,12 +123,12 @@ const Checkout = () => {
             <label>
               <input
                 type="radio"
-                value="PayPal"
-                checked={paymentMethod === 'PayPal'}
+                value="UPI"
+                checked={paymentMethod === 'UPI'}
                 onChange={(e) => setPaymentMethod(e.target.value)}
                 className="mr-2"
               />
-              Upi
+              UPI
             </label>
           </div>
           {paymentMethod === 'Credit Card' && (
@@ -121,8 +153,8 @@ const Checkout = () => {
               />
             </div>
           )}
-          {paymentMethod === 'PayPal' && (
-            <p>Redirecting to Upi...</p>
+          {paymentMethod === 'UPI' && (
+            <p>Redirecting to UPI...</p>
           )}
         </div>
 

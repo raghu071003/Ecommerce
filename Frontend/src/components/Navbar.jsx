@@ -12,7 +12,7 @@ const Navbar = () => {
   const [userMenu, setUserMenu] = useState(false);
   const [query, setQuery] = useState("");
   const [data, setData] = useState([]);
-  const [searching, setSearching] = useState(false);
+  const [showSearchResults, setShowSearchResults] = useState(false);
   const { isLogged, setIsLoggedIn } = useAuth();
 
   // Fetch data whenever the query changes
@@ -20,26 +20,28 @@ const Navbar = () => {
     const fetchData = async () => {
       if (query.trim() === "") {
         setData([]);
+        setShowSearchResults(false);
         return;
       }
-      setSearching(true);
+      setShowSearchResults(true);
       try {
         const res = await axios.get(`http://localhost:8090/api/v1/user/search/${query}`);
         setData(res.data);
         setIsLoggedIn(true);
       } catch (error) {
         console.error("Error fetching data:", error);
-      } finally {
-        setSearching(false);
+        setData([]);
       }
     };
-    fetchData();
+
+    const debounceTimer = setTimeout(fetchData, 300);
+    return () => clearTimeout(debounceTimer);
   }, [query, setIsLoggedIn]);
 
   const handleSearch = () => {
     if (query.trim() !== "") {
       navigate(`/search/${query}`);
-      setSearching(false);
+      setShowSearchResults(false);
     }
   };
 
@@ -52,7 +54,7 @@ const Navbar = () => {
       const res = await axios.post("http://localhost:8090/api/v1/user/logout", {}, { withCredentials: true });
       if (res.data.statusCode === 200) {
         navigate("/login");
-        setSearching(false);
+        setShowSearchResults(false);
       }
     } catch (error) {
       console.error("Error during logout:", error);
@@ -68,7 +70,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gray-800 shadow-md border-b" onClick={() => setSearching(false)}>
+    <nav className="bg-gray-800 shadow-md border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
@@ -93,12 +95,14 @@ const Navbar = () => {
                 onChange={handleChange}
                 value={query}
                 placeholder="Search..."
+                onFocus={() => setShowSearchResults(true)}
+                onBlur={() => setTimeout(() => setShowSearchResults(false), 200)}
               />
               <button onClick={handleSearch}>
                 <Search className='h-8 w-8 bg-white rounded-r-xl p-1 mr-3' />
               </button>
-              {searching && (
-                <div className="absolute bg-white rounded-xl shadow-lg mt-2 w-full max-w-xs top-14 p-3">
+              {showSearchResults && (
+                <div className="absolute bg-white rounded-xl shadow-lg mt-2 w-full max-w-xs top-14 p-3 z-50">
                   {data && data.data && data.data.length > 0 ? (
                     data.data.slice(0, 5).map((item) => (
                       <SmallProduct
@@ -109,7 +113,9 @@ const Navbar = () => {
                         image={item.image[0]}
                       />
                     ))
-                  ) : "No Results Found"}
+                  ) : (
+                    <p className="text-gray-500">No Results Found</p>
+                  )}
                 </div>
               )}
               <button className="p-1 rounded-full text-white hover:text-orange-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-white" onClick={() => navigate("/cart")}>
@@ -118,6 +124,7 @@ const Navbar = () => {
               <button
                 className="ml-3 p-1 rounded-full text-white hover:text-orange-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-white"
                 onClick={handleUser}
+                
               >
                 <User className="h-6 w-6" />
               </button>

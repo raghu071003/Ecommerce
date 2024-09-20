@@ -21,6 +21,22 @@ const cartItemSchema = new Schema({
     },
   });
 
+
+const addressSchema = new Schema({
+    House_No :{
+        type:String
+    },
+    City:{
+        type:String,
+    },
+    State:{
+        type:String,
+    },
+    Pincode:{
+        type:String
+    }
+})
+
 const userSchema = new Schema({
     email:{
         type:String,
@@ -51,7 +67,7 @@ const userSchema = new Schema({
         type:[cartItemSchema]
     },
     address:{
-        type:String,
+        type:[addressSchema],
     },
     history:{
         type:[String],

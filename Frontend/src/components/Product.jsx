@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
 
 const Product = () => {
@@ -12,7 +12,7 @@ const Product = () => {
   const [selectedSize, setSelectedSize] = useState('');
   const { id } = useParams();
   const { cartItem, addToCart } = useAuth()
-
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -80,7 +80,7 @@ const Product = () => {
         </div>
         <div className='flex flex-col'>
           <h1 className='text-3xl font-bold mb-4'>{product.name}</h1>
-          <p className='text-xl text-gray-800 mb-4 font-bold'>₹{product.price}<span className='text-sm text-semibold m-3'>includes 5% off </span></p>
+          <p className='text-xl text-gray-800 mb-4 font-bold'>₹{product.price}<span className='text-sm m-3'>includes 5% off </span></p>
           <p className='text-sm text-gray-800 mb-4 line-through'>₹{product.sellPrice}</p>
           <p className='text-gray-600 mb-6'>{product.description || 'No description available'}</p>
 
@@ -128,8 +128,22 @@ const Product = () => {
             <span className='text-yellow-500'>{'★'.repeat(Math.round(product.rating))}</span>
             <span className='text-gray-600 ml-2'>{product.rating} ({product.reviews.length} reviews)</span>
           </div>
+          <div className='flex gap-4'>
+            <button 
+              className='bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition duration-300 ease-in-out'
+              onClick={handleCart}
+            >
+              {loading ? "Please Wait" :"Add to Cart"}
+            </button>
+            <button 
+              className='bg-gray-800 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-300 ease-in-out'
+              onClick={()=>navigate(`/checkout/${product._id}`)}
+            >
+              Buy Now
+            </button>
+          </div>
 
-          <div className='mb-6'>
+          <div className='mt-6'>
             <h2 className='text-2xl font-semibold mb-2'>Reviews</h2>
             {product.reviews.length > 0 ? (
               <div>
@@ -148,20 +162,7 @@ const Product = () => {
             )}
           </div>
 
-          <div className='flex gap-4'>
-            <button 
-              className='bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition duration-300 ease-in-out'
-              onClick={handleCart}
-            >
-              {loading ? "Please Wait" :"Add to Cart"}
-            </button>
-            <button 
-              className='bg-gray-800 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-300 ease-in-out'
-              onClick={`/checkout/${product._id}`}
-            >
-              Buy Now
-            </button>
-          </div>
+          
         </div>
       </div>
     </div>

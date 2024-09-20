@@ -6,7 +6,7 @@
 
 body{
     font-family: 'Poppins';
-}
+} 
 
 .cur-font{
     font-family: 'Dancing Script';
@@ -29,7 +29,6 @@ body{
     }
   }
   
-  /* Define keyframes for fading out */
   @keyframes fadeOut {
     from {
       opacity: 1;

@@ -4,8 +4,8 @@ import {verifyJwt,verifyJwt2} from "../middleware/auth.middleware.js";
 import { getProducts } from "../controllers/user.controller.js";
 import { searchProduct } from "../controllers/user.controller.js";
 import { getProduct } from "../controllers/user.controller.js";
-import { userProfile } from "../controllers/user.controller.js";
-import { rateProduct,sendStatus } from "../controllers/user.controller.js";
+import { userProfile,updateProfile,getOrders } from "../controllers/user.controller.js";
+import { rateProduct,sendStatus,processOrder } from "../controllers/user.controller.js";
 const router = Router()
 
 router.route("/register").post(registerUser)
@@ -20,5 +20,8 @@ router.route("/category/:category").get(getCategory)
 router.route("/login").post(userLogin)
 router.route("/logout").post(verifyJwt,userLogout)
 router.route("/profile").post(verifyJwt,userProfile)
+router.route("/update-profile").put(verifyJwt,updateProfile)
+router.route("/orders").post(verifyJwt,processOrder);
+router.route("/getOrders").post(verifyJwt,getOrders);
 
 export default router

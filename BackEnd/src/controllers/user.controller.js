@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { options } from '../constants.js';
 import { Product } from '../models/product.model.js';
+import { Order } from '../models/orders.model.js';
 
 
 const registerUser = asyncHandler(async(req,res)=>{
@@ -167,19 +168,41 @@ const getProduct = asyncHandler(async(req,res)=>{
     return res.status(200,"Product FOund!").json(product)
 })
 
-const userProfile = asyncHandler(async (req, res) => {
-    
-    // const userId = req.user._id;
-    // if (!userId) {
-    //     return res.status(400).json(new ApiResponse(400, null, "User ID is missing"));
-    // }
+const updateProfile = asyncHandler(async (req, res) => {
+    const { fullName, email, mobile, address } = req.body;
 
-    // Fetch user profile from the database
     const user = await User.findOne(req.user._id);
 
-    // Check if the user exists
     if (!user) {
-        return res.status(404).json(new ApiResponse(404, null, "User not found"));
+        throw new ApiError(404, "User not found");
+    }
+
+    if (fullName) user.fullName = fullName;
+    if (email) user.email = email;
+    if (mobile) user.mobile = mobile;
+    if (address) user.address = address;
+
+    await user.save();
+
+    const updatedUser = user.toObject();
+    delete updatedUser.password;
+
+    res.status(200).json({
+        statusCode: 200,
+        message: "Profile updated successfully",
+        data: updatedUser
+    });
+});
+
+export default updateProfile;
+
+const userProfile = asyncHandler(async (req, res) => {
+    
+    
+    const user = await User.findOne(req.user._id);
+
+    if (!user) {
+        return res.status(404).json(new ApiError(404, "User not found"));
     }
 
     // Exclude sensitive information from the response
@@ -189,7 +212,8 @@ const userProfile = asyncHandler(async (req, res) => {
         fullName: user.fullName,
         mobile: user.mobile,
         cart:user.cart,
-        history:user.history
+        history:user.history,
+        address:user.address
         // Add any other fields you need
     };
 
@@ -284,6 +308,86 @@ const sendStatus = asyncHandler(async(req,res)=>{
         user:user
     })
 })
+
+const processOrder = asyncHandler(async (req, res) => {
+    const user = await User.findOne(req.user._id).select("-password -refreshToken");
+    
+    if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+    }
+
+    const { address, paymentMethod, items, totalAmount } = req.body;
+
+    // Validate input fields
+    if (!items || items.length === 0 || !address || !paymentMethod || !totalAmount) {
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    try {
+        const orders = await Promise.all(items.map(async item => {
+            const product = await Product.findById(item.productId);
+            if (!product) {
+                throw new Error(`Product with ID ${item.productId} not found`);
+            }
+
+            const newOrder = new Order({
+                items:items,
+                userId: user._id,
+                address:address,
+                quantity: item.quantity,
+                totalAmount: item.price * item.quantity // Adjust if needed
+            });
+
+            return await newOrder.save();
+        }));
+
+        res.status(201).json({
+            status: 200,
+            data: orders,
+            message: "Orders placed successfully"
+        });
+    } catch (error) {
+        console.error("Error processing order:", error);
+        res.status(500).json({
+            message: 'Server error',
+            error: error.message
+        });
+    }
+});
+
+const getOrders = asyncHandler(async (req, res) => {
+    const user = await User.findOne(req.user._id).select("-password -refreshToken");
+    if (!user) {
+        throw new ApiError(404, "User Not Found");
+    }
+
+    const orders = await Order.find({ userId: user._id });
+
+    // Populate product details for each item in the orders
+    const populatedOrders = await Promise.all(
+        orders.map(async (order) => {
+            const populatedItems = await Promise.all(
+                order.items.map(async (item) => {
+                    const product = await Product.findById(item.productId);
+                    return {
+                        ...item.toObject(), // Convert item to a plain object
+                        product, // Include product details
+                    };
+                })
+            );
+
+            return {
+                ...order.toObject(), // Convert order to a plain object
+                items: populatedItems, // Replace items with populated items
+            };
+        })
+    );
+
+    return res.status(200).json(
+        new ApiResponse(200, populatedOrders, "Fetched Successfully")
+    );
+});
+
 export {
-    registerUser,userLogin,userLogout,getProducts,searchProduct,getProduct,userProfile,rateProduct,updateCart,sendStatus,getCategory
+    registerUser,userLogin,userLogout,getProducts,searchProduct,getProduct,userProfile,rateProduct,updateCart,sendStatus,getCategory,updateProfile,processOrder,getOrders
 }
