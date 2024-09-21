@@ -16,6 +16,8 @@ import CartComponent from './components/Cart'
 import Categories from './pages/Categories'
 import Checkout from './pages/CheckOut'
 import DesignShirt from './pages/DesignShirt'
+import SingleProductCheckout from './pages/SingleOrder'
+import OrderConfirmation from './pages/OrderConfirmation'
 
 function App() {
 
@@ -44,8 +46,9 @@ function App() {
               <Route path ="/cart" element={<CartComponent/>}/>
               <Route path="/categories" element={<Categories />}/>
               <Route path="/checkoutCart" element={<Checkout />}/>
-              <Route path="/checkoutCart/:id" element={<Checkout />}/>
+              <Route path="/checkout/:id" element={<SingleProductCheckout />}/>
               <Route path='/design' element={<DesignShirt />}/>
+              <Route path='/confirmation' element={<OrderConfirmation />} />
             </Routes>
           </div>
 

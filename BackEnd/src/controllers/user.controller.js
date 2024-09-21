@@ -11,7 +11,10 @@ const registerUser = asyncHandler(async(req,res)=>{
     const {email,fullName,password,mobile} = req.body
     //validation
     if ([email, fullName, password].some((field) => field?.trim() === "")) {
-        throw new ApiError(400, "All fields are required");
+        // throw new ApiError(400, "All fields are required");
+        return res.status(400).json({
+            message : "Please enter valid data"
+        })
       }
     // Check for duplication
     const existedUser = await User.findOne({
@@ -25,8 +28,7 @@ const registerUser = asyncHandler(async(req,res)=>{
         fullName:fullName,
         password:password,
         mobile:mobile
-    })
-    //removing password and refreshToken from the user object
+    })  
     const createdUser = await User.findById(user._id).select(
         "-password -refreshToken"
     )
@@ -370,8 +372,8 @@ const getOrders = asyncHandler(async (req, res) => {
                 order.items.map(async (item) => {
                     const product = await Product.findById(item.productId);
                     return {
-                        ...item.toObject(), // Convert item to a plain object
-                        product, // Include product details
+                        ...item.toObject(), 
+                        product,
                     };
                 })
             );

@@ -5,6 +5,12 @@ import LoginAlert from './LoginAlert';
 import { Edit, X, Trash } from 'lucide-react';
 import { useNavigate } from 'react-router';
 
+const LoadingScreen = () => (
+  <div className="flex items-center justify-center h-screen">
+    <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-gray-600"></div>
+  </div>
+);
+
 const EditForm = ({ formData, handleChange, handleSubmit, isLoading, onCancel, handleAddAddress, handleRemoveAddress }) => (
   <form onSubmit={handleSubmit} className="w-full max-w-lg">
     {['fullName', 'email', 'mobile'].map((field) => (
@@ -77,6 +83,7 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [edit, setEdit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
   const [error, setError] = useState('');
   const { setIsLoggedIn } = useAuth();
   const [formData, setFormData] = useState({ fullName: '', email: '', mobile: '', address: [] });
@@ -103,6 +110,8 @@ const Profile = () => {
       });
     } catch (err) {
       setError("Failed to load user profile");
+    } finally {
+      setLoadingData(false);
     }
   };
 
@@ -163,6 +172,10 @@ const Profile = () => {
     }
   };
 
+  if (loadingData) {
+    return <LoadingScreen />;
+  }
+
   return (
     <>
       {user ? (
@@ -211,14 +224,14 @@ const Profile = () => {
                       <div className="">
                         <h3 className="font-bold text-lg">Order ID: {item._id}</h3>
                         <p className="text-gray-600">Placed on: {new Date(item.createdAt).toLocaleDateString()}</p>
-                        <p className="text-gray-600">Total: ${item.totalAmount.toFixed(2)}</p>
+                        <p className="text-gray-600">Total: ₹{item.totalAmount.toFixed(2)}</p>
                         <p className="text-gray-600">Status: {item.status}</p>
                       </div>
                       <div className="ml-4 flex">
                         {item.items.map((product) => (
                           <div key={product._id} className="flex flex-col items-center">
                             {product.product.image && product.product.image.length > 0 ? (
-                              <img src={product.product.image[0]} className='w-16 hover:scale-110 cursor-pointer' alt={product.product.name} onClick={()=>navigate(`/product/${product.productId}`)}/>
+                              <img src={product.product.image[0]} className='w-16 hover:scale-110 cursor-pointer' alt={product.product.name} onClick={() => navigate(`/product/${product.productId}`)} />
                             ) : (
                               <span className="text-gray-500">No Image Available</span>
                             )}
@@ -231,7 +244,6 @@ const Profile = () => {
                 ) : (
                   <p className="text-gray-600">No orders found.</p>
                 )}
-
               </div>
             </div>
           )}
@@ -244,3 +256,4 @@ const Profile = () => {
 };
 
 export default Profile;
+

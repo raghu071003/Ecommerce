@@ -41,7 +41,7 @@ const Checkout = () => {
     setSuccess('');
 
     const orderData = {
-      address: shippingAddress, // Use the entire shipping address object
+      address: shippingAddress,
       paymentMethod,
       items: cartItem.map(item => ({
         productId: item.id,
@@ -55,8 +55,7 @@ const Checkout = () => {
       const response = await axios.post('http://localhost:8090/api/v1/user/orders', orderData, { withCredentials: true });
       if (response.status === 201) {
         setSuccess('Order placed successfully!');
-        // Optionally navigate to a confirmation page
-        // navigate('/confirmation');
+        navigate('/confirmation');
       }
     } catch (error) {
       console.error(error);

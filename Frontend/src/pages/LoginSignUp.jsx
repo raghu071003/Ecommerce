@@ -33,7 +33,7 @@ const AuthComponent = () => {
         setMessage('Login successful!');
         setIsLoggedIn(true)
         navigate('/');
-        console.log(isLogged);
+        // console.log(isLogged);
         
         // Handle successful login (e.g., store token, redirect)
       } else {
@@ -51,6 +51,10 @@ const AuthComponent = () => {
     e.preventDefault();
     // Implement signup logic here
     setIsLoading(true)
+    if(password.length < 8){
+      setMessage("password should have minimum of 8 characters")
+      return;
+    }
     try {
       const response = await axios.post(
         "http://localhost:8090/api/v1/user/register",
@@ -66,12 +70,16 @@ const AuthComponent = () => {
           }
         }
       )
-      // console.log(response);
+      console.log(response);
       
       if(response.data && response.status === 200){
         setMessage("UserCreated! Please Login")
+      }else{
+        setMessage(response.data?.message  || "Enter Valid Data!!")
+
       }
     } catch (error) {
+        setMessage ( "Enter Valid Data!")
         setIsLoading(false)
     }
   };
