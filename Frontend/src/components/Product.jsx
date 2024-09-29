@@ -137,7 +137,7 @@ const Product = () => {
             </button>
             <button 
               className='bg-gray-800 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-300 ease-in-out'
-              onClick={()=>navigate(`/checkout/${product._id}`)}
+              onClick={()=>navigate(`/checkout/${product._id}/${selectedSize}`)}
             >
               Buy Now
             </button>

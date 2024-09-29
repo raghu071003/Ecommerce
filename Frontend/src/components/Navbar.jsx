@@ -14,6 +14,7 @@ const Navbar = () => {
   const [data, setData] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const { isLogged, setIsLoggedIn } = useAuth();
+  
 
   // Fetch data whenever the query changes
   useEffect(() => {
@@ -53,6 +54,8 @@ const Navbar = () => {
     try {
       const res = await axios.post("http://localhost:8090/api/v1/user/logout", {}, { withCredentials: true });
       if (res.data.statusCode === 200) {
+        localStorage.removeItem('authStatus');
+        localStorage.removeItem('cartItem')
         navigate("/login");
         setShowSearchResults(false);
       }

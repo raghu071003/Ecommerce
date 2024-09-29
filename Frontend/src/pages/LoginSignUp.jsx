@@ -47,14 +47,17 @@ const AuthComponent = () => {
     }
   };
 
-  const handleSignup = async(e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-    // Implement signup logic here
-    setIsLoading(true)
-    if(password.length < 8){
-      setMessage("password should have minimum of 8 characters")
-      return;
+    setIsLoading(true);
+  
+    // Password validation
+    if (password.length < 8) {
+      setMessage("Password should have a minimum of 8 characters");
+      setIsLoading(false); 
+      return; 
     }
+  
     try {
       const response = await axios.post(
         "http://localhost:8090/api/v1/user/register",
@@ -62,27 +65,29 @@ const AuthComponent = () => {
           email,
           password,
           mobile,
-          fullName:name
+          fullName: name,
         },
         {
-          headers:{
-            "Content-Type":"application/json"
-          }
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      )
+      );
+  
       console.log(response);
-      
-      if(response.data && response.status === 200){
-        setMessage("UserCreated! Please Login")
-      }else{
-        setMessage(response.data?.message  || "Enter Valid Data!!")
-
+  
+      if (response.status === 200) {
+        setMessage("User Created! Please Login");
+      } else {
+        setMessage(response.data?.message || "Enter valid data!");
       }
     } catch (error) {
-        setMessage ( "Enter Valid Data!")
-        setIsLoading(false)
+      setMessage("Enter valid data!");
+    } finally {
+      setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="max-w-md mx-auto mt-10 bg-gray-800 rounded-xl shadow-md overflow-hidden md:max-w-2xl p-4">

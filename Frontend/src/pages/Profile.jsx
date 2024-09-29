@@ -4,6 +4,8 @@ import { useAuth } from '../Context/AuthContext';
 import LoginAlert from './LoginAlert';
 import { Edit, X, Trash } from 'lucide-react';
 import { useNavigate } from 'react-router';
+import {lodash} from 'lodash'
+
 
 const LoadingScreen = () => (
   <div className="flex items-center justify-center h-screen">
@@ -97,7 +99,6 @@ const Profile = () => {
 
       setUser(res.data.data);
       setOrders(orderRes.data.data);
-      console.log(orderRes.data.data);
 
       setFormData({
         ...res.data.data,

@@ -14,6 +14,7 @@ const SingleProductCheckout = () => {
   const [success, setSuccess] = useState('');
   const [address, setAddress] = useState([]);
   const navigate = useNavigate();
+  const size = useParams()
 
   // Fetch product details and user addresses
   const fetchProductAndUser = async () => {
@@ -79,6 +80,7 @@ const SingleProductCheckout = () => {
             <div className="flex justify-between">
               <span>{product.name} x 1</span>
               <span>₹{product.price}</span>
+              {/* <span>{size}</span> */}
             </div>
             <div className="flex justify-between font-semibold mt-4">
               <span>Total:</span>
