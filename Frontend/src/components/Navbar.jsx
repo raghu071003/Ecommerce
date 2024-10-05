@@ -14,7 +14,6 @@ const Navbar = () => {
   const [data, setData] = useState([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const { isLogged, setIsLoggedIn } = useAuth();
-  
 
   // Fetch data whenever the query changes
   useEffect(() => {
@@ -55,7 +54,7 @@ const Navbar = () => {
       const res = await axios.post("http://localhost:8090/api/v1/user/logout", {}, { withCredentials: true });
       if (res.data.statusCode === 200) {
         localStorage.removeItem('authStatus');
-        localStorage.removeItem('cartItem')
+        localStorage.removeItem('cartItem');
         navigate("/login");
         setShowSearchResults(false);
       }
@@ -90,6 +89,7 @@ const Navbar = () => {
               </div>
             </div>
           </div>
+          {/* Search bar for larger screens */}
           <div className="hidden md:block relative">
             <div className="ml-4 flex items-center md:ml-6 relative">
               <input
@@ -127,7 +127,6 @@ const Navbar = () => {
               <button
                 className="ml-3 p-1 rounded-full text-white hover:text-orange-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-white"
                 onClick={handleUser}
-                
               >
                 <User className="h-6 w-6" />
               </button>
@@ -165,6 +164,38 @@ const Navbar = () => {
           </div>
           <div className="pt-4 pb-3 border-t border-gray-200">
             <div className="flex items-center px-5 relative">
+              {/* Search input for smaller screens */}
+              <input
+                type="text"
+                className='rounded-xl h-8 w-full px-3 outline-none'
+                onChange={handleChange}
+                value={query}
+                placeholder="Search..."
+                onFocus={() => setShowSearchResults(true)}
+                onBlur={() => setTimeout(() => setShowSearchResults(false), 200)}
+              />
+              <button onClick={handleSearch}>
+                <Search className='h-8 w-8 bg-white rounded-xl p-1 mr-3' />
+              </button>
+              {showSearchResults && (
+                <div className="absolute bg-white rounded-xl shadow-lg mt-2 w-full max-w-xs top-14 p-3 z-50">
+                  {data && data.data && data.data.length > 0 ? (
+                    data.data.slice(0, 5).map((item) => (
+                      <SmallProduct
+                        key={item._id}
+                        id={item._id}
+                        name={item.name}
+                        price={item.price}
+                        image={item.image[0]}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-gray-500">No Results Found</p>
+                  )}
+                </div>
+              )}
+            </div>
+            <div className="flex items-center px-5 relative mt-2">
               <button className="ml-auto p-1 rounded-full text-white hover:text-orange-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-white">
                 <ShoppingCart className="h-6 w-6" />
               </button>
@@ -172,7 +203,7 @@ const Navbar = () => {
                 <User className="h-6 w-6" />
               </button>
               {userMenu && (
-                <div className='absolute bg-gray-800 right-0 top-14 text-white p-3 rounded-xl gap-3'>
+                <div className='absolute bg-gray-800 right-0 top-14 text-white p-3 rounded-xl gap-3 flex flex-col'>
                   <NavLink to="/profile" className='text-xl border-b' onClick={() => navigate("/profile")}>Profile</NavLink>
                   <NavLink to="#" className='text-xl border-b' onClick={handleLogout}>Logout</NavLink>
                 </div>

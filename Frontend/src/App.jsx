@@ -18,6 +18,7 @@ import Checkout from './pages/CheckOut'
 import DesignShirt from './pages/DesignShirt'
 import SingleProductCheckout from './pages/SingleOrder'
 import OrderConfirmation from './pages/OrderConfirmation'
+import Loading from './components/Loading'
 
 function App() {
 
@@ -49,6 +50,7 @@ function App() {
               <Route path="/checkout/:id/:size" element={<SingleProductCheckout />}/>
               <Route path='/design' element={<DesignShirt />}/>
               <Route path='/confirmation' element={<OrderConfirmation />} />
+              <Route path='/load' element={<Loading />} />
             </Routes>
           </div>
 

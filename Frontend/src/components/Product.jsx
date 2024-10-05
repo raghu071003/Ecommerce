@@ -1,23 +1,25 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
+import Loading from './Loading';
 
 const Product = () => {
   const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Single loading state
   const [error, setError] = useState(null);
   const [activeImage, setActiveImage] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('');
   const { id } = useParams();
-  const { cartItem, addToCart } = useAuth()
+  const { cartItem, addToCart } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`http://localhost:8090/api/v1/user/product/${id}`,{withCredentials:true});
+        setLoading(true);
+        const response = await axios.get(`http://localhost:8090/api/v1/user/product/${id}`, { withCredentials: true });
         setProduct(response.data);
         setActiveImage(response.data.image[0]);
       } catch (error) {
@@ -41,19 +43,33 @@ const Product = () => {
   };
 
   const handleCart = () => {
-    setLoading(true)
     if (!selectedSize) {
-      alert('Please select a size');
-      setLoading(false)
+      setError('Please select a size.');
       return;
     }
 
-    const newItem = { id:product._id,name:product.name, quantity, size:selectedSize,price:product.price,image:product.image[0] };
-    addToCart(newItem)
-    setLoading(false)
+    const newItem = {
+      id: product._id,
+      name: product.name,
+      quantity,
+      size: selectedSize,
+      price: product.price,
+      image: product.image[0]
+    };
+
+    addToCart(newItem);
   };
 
-  // if (loading) return <p className="text-center text-lg font-semibold">Loading...</p>;
+  const handleCheckOut = ()=>{
+    if(!selectedSize){
+      setError('please select a size');
+      return;
+    }
+    navigate(`/checkout/${product._id}/${selectedSize}`)
+
+  }
+
+  if (loading) return <Loading />;
   if (error) return <p className="text-center text-lg font-semibold text-red-600">{error}</p>;
   if (!product) return <p className="text-center text-lg font-semibold">No product data available</p>;
 
@@ -63,24 +79,21 @@ const Product = () => {
         <div className='flex flex-col items-center'>
           <div className='flex flex-wrap justify-center'>
             {product.image.map((img, idx) => (
-              <img 
+              <img
                 key={idx}
-                src={img} 
-                alt={`Thumbnail ${idx}`} 
-                className='w-20 border rounded-xl m-2 cursor-pointer hover:border-gray-800' 
-                onClick={() => setActiveImage(img)} 
+                src={img}
+                alt={`Thumbnail ${idx}`}
+                className='w-20 border rounded-xl m-2 cursor-pointer hover:border-gray-800'
+                onClick={() => setActiveImage(img)}
               />
             ))}
           </div>
-          <img 
-            src={activeImage} 
-            alt={product.name} 
-            className='w-full max-w-md rounded-lg shadow-lg' 
-          />
+          <img src={activeImage} alt={product.name} className='w-full max-w-md rounded-lg shadow-lg' />
         </div>
+
         <div className='flex flex-col'>
           <h1 className='text-3xl font-bold mb-4'>{product.name}</h1>
-          <p className='text-xl text-gray-800 mb-4 font-bold'>₹{product.price}<span className='text-sm m-3'>includes 5% off </span></p>
+          <p className='text-xl text-gray-800 mb-4 font-bold'>₹{product.price}<span className='text-sm m-3'>includes 5% off</span></p>
           <p className='text-sm text-gray-800 mb-4 line-through'>₹{product.sellPrice}</p>
           <p className='text-gray-600 mb-6'>{product.description || 'No description available'}</p>
 
@@ -88,9 +101,9 @@ const Product = () => {
             <p className='mx-2 text-lg font-semibold'>Size:</p>
             <div className='flex gap-2'>
               {sizeOptions.map((size, idx) => (
-                <p 
+                <p
                   key={idx}
-                  className={`border p-5 rounded-full cursor-pointer ${selectedSize === size ? 'bg-gray-200 border-black' : 'hover:border-black focus:bg-gray-200'}`}
+                  className={`border p-5 rounded-full cursor-pointer ${selectedSize === size ? 'bg-gray-200 border-black' : 'hover:border-black'}`}
                   onClick={() => setSelectedSize(size)}
                 >
                   {size}
@@ -102,19 +115,19 @@ const Product = () => {
           <div className='mb-6'>
             <h2 className='text-lg font-semibold mb-2'>Quantity</h2>
             <div className='flex items-center'>
-              <button 
+              <button
                 onClick={decrementQuantity}
                 className='bg-gray-300 text-gray-700 py-2 px-4 rounded-l-md hover:bg-gray-400'
               >
                 -
               </button>
-              <input 
+              <input
                 type='number'
                 value={quantity}
                 readOnly
                 className='p-2 border-t border-b border-gray-300 w-16 text-center'
               />
-              <button 
+              <button
                 onClick={incrementQuantity}
                 className='bg-gray-300 text-gray-700 py-2 px-4 rounded-r-md hover:bg-gray-400'
               >
@@ -129,15 +142,15 @@ const Product = () => {
             <span className='text-gray-600 ml-2'>{product.rating} ({product.reviews.length} reviews)</span>
           </div>
           <div className='flex gap-4'>
-            <button 
+            <button
               className='bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition duration-300 ease-in-out'
               onClick={handleCart}
             >
-              {loading ? "Please Wait" :"Add to Cart"}
+              Add to Cart
             </button>
-            <button 
+            <button
               className='bg-gray-800 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-300 ease-in-out'
-              onClick={()=>navigate(`/checkout/${product._id}/${selectedSize}`)}
+              onClick={handleCheckOut}
             >
               Buy Now
             </button>
@@ -161,8 +174,6 @@ const Product = () => {
               <p>No reviews available</p>
             )}
           </div>
-
-          
         </div>
       </div>
     </div>

@@ -37,10 +37,14 @@ const History = () => {
         <HistoryIcon />
       </div>
       <div className='flex justify-center items-center p-3 gap-3'>
-        {data.map((item, idx) => {
+        {data.length !== 0 ? data.map((item, idx) => {
           const [id, img] = item.split(' ');
-          return <HistoryItem key={id} img={img} id={id} />;
-        })}
+          return <HistoryItem key={id} img={img} id={id} />
+
+        })
+      :
+      <p>No History Available</p>
+      }
       </div>
     </div>
   );

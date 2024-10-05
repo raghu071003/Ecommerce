@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ShoppingCart, Search, Menu } from 'lucide-react';
 import Hero from '../components/Hero';
 import ProductGrid from '../components/ProductGrid';
@@ -9,6 +9,9 @@ import { useAuth } from '../Context/AuthContext';
 const HomePage = () => {
   
   const {isLogged} = useAuth();
+  useEffect(()=>{
+
+  },[])
   
   return(
   <div className="min-h-screen flex flex-col">

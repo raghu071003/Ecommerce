@@ -40,7 +40,7 @@ const YourComponent = () => {
       ></div>
       <div className='absolute top-0 left-0 h-96 w-full bg-black opacity-75 z-10'>
       </div>
-      <div className="relative container mx-auto text-center z-20">
+      <div className="relative container mx-auto text-center z-20 ">
         <h2 className="text-4xl font-bold mb-4 text-white">
           Welcome to Ani
           <span 

@@ -202,7 +202,6 @@ const userProfile = asyncHandler(async (req, res) => {
     
     
     const user = await User.findOne(req.user._id);
-    console.log(user);
     
 
     if (!user) {
