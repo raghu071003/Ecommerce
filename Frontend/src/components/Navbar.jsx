@@ -25,7 +25,7 @@ const Navbar = () => {
       }
       setShowSearchResults(true);
       try {
-        const res = await axios.get(`http://localhost:8090/api/v1/user/search/${query}`);
+        const res = await axios.get(`https://aniclothing.onrender.com/api/v1/user/search/${query}`);
         setData(res.data);
         setIsLoggedIn(true);
       } catch (error) {
@@ -51,7 +51,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      const res = await axios.post("http://localhost:8090/api/v1/user/logout", {}, { withCredentials: true });
+      const res = await axios.post("https://aniclothing.onrender.com/api/v1/user/logout", {}, { withCredentials: true });
       if (res.data.statusCode === 200) {
         localStorage.removeItem('authStatus');
         localStorage.removeItem('cartItem');
@@ -200,6 +200,7 @@ const Navbar = () => {
                 <ShoppingCart className="h-6 w-6" />
               </button>
               <button className="ml-4 p-1 rounded-full text-white hover:text-orange-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-white" onClick={handleUser}>
+                onClick={handleUser}
                 <User className="h-6 w-6" />
               </button>
               {userMenu && (

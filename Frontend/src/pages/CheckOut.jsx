@@ -16,7 +16,7 @@ const Checkout = () => {
   // Fetch user profile and addresses
   const fetchUser = async () => {
     try {
-      const res = await axios.post("http://localhost:8090/api/v1/user/profile", {}, { withCredentials: true });
+      const res = await axios.post("https://aniclothing.onrender.com/api/v1/user/profile", {}, { withCredentials: true });
       setAddress(res.data.data.address);
       if (res.data.data.address.length > 0) {
         setShippingAddress(res.data.data.address[0]); // Set first address as default
@@ -57,7 +57,7 @@ const Checkout = () => {
     };
 
     try {
-      const response = await axios.post('http://localhost:8090/api/v1/user/orders', orderData, { withCredentials: true });
+      const response = await axios.post('https://aniclothing.onrender.com/api/v1/user/orders', orderData, { withCredentials: true });
       if (response.status === 201) {
         setSuccess('Order placed successfully!');
         navigate('/confirmation');

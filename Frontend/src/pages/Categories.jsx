@@ -17,7 +17,7 @@ const Categories = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get(`http://localhost:8090/api/v1/user/category/${category}?sort=${sortBy}`);
+      const res = await axios.get(`https://aniclothing.onrender.com/api/v1/user/category/${category}?sort=${sortBy}`);
       setProducts(res.data);
     } catch (e) {
       setError('Failed to fetch products');

@@ -19,8 +19,8 @@ const SingleProductCheckout = () => {
   // Fetch product details and user addresses
   const fetchProductAndUser = async () => {
     try {
-      const productRes = await axios.get(`http://localhost:8090/api/v1/user/product/${id}`);
-      const userRes = await axios.post("http://localhost:8090/api/v1/user/profile", {}, { withCredentials: true });
+      const productRes = await axios.get(`https://aniclothing.onrender.com/api/v1/user/product/${id}`);
+      const userRes = await axios.post("https://aniclothing.onrender.com/api/v1/user/profile", {}, { withCredentials: true });
 
       setProduct(productRes.data);
       setAddress(userRes.data.data.address);
@@ -56,7 +56,7 @@ const SingleProductCheckout = () => {
     };
 
     try {
-      const response = await axios.post('http://localhost:8090/api/v1/user/orders', orderData, { withCredentials: true });
+      const response = await axios.post('https://aniclothing.onrender.com/api/v1/user/orders', orderData, { withCredentials: true });
       if (response.status === 201) {
         setSuccess('Order placed successfully!');
         // Optionally navigate to a confirmation page

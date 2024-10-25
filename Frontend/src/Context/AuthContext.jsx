@@ -24,7 +24,7 @@ export const AuthContextProvider = ({ children }) => {
       fetchCartFromLocalStorage();
     } else {
       try {
-        const response = await axios.post('http://localhost:8090/api/v1/user/status', {}, { withCredentials: true });
+        const response = await axios.post('https://aniclothing.onrender.com/api/v1/user/status', {}, { withCredentials: true });
         setIsLoggedIn(response.data.isLoggedIn);
         setUser(response.data.user);
         setCartItem(response.data.user.cart);
@@ -52,7 +52,7 @@ export const AuthContextProvider = ({ children }) => {
   const updateCart = useCallback(async (newCart) => {
     if (isLogged) {
       try {
-        await axios.post("http://localhost:8090/api/v1/user/updateCart", newCart, { withCredentials: true });
+        await axios.post("https://aniclothing.onrender.com/api/v1/user/updateCart", newCart, { withCredentials: true });
         localStorage.setItem('cartItem', JSON.stringify(newCart)); // Update local storage
       } catch (error) {
         setError('Failed to update cart');

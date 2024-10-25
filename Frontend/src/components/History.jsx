@@ -11,7 +11,7 @@ const History = () => {
   // Fetch data from the API
   const fetchData = async () => {
     try {
-      const res = await axios.post("http://localhost:8090/api/v1/user/profile", {}, { withCredentials: true });
+      const res = await axios.post("https://aniclothing.onrender.com/api/v1/user/profile", {}, { withCredentials: true });
       // Slice the last 9 items directly before setting state
       const historyData = res.data.data.history;
       setData(historyData.slice(-9));

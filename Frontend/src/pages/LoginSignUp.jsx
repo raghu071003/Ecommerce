@@ -19,7 +19,7 @@ const AuthComponent = () => {
     
     try {
       const response = await axios.post(
-        "http://localhost:8090/api/v1/user/login",
+        "https://aniclothing.onrender.com/api/v1/user/login",
         { email, password },
         {
           headers: {
@@ -60,7 +60,7 @@ const AuthComponent = () => {
   
     try {
       const response = await axios.post(
-        "http://localhost:8090/api/v1/user/register",
+        "https://aniclothing.onrender.com/api/v1/user/register",
         {
           email,
           password,

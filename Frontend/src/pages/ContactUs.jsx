@@ -19,7 +19,7 @@ const ContactUs = () => {
     setSuccess(null);
 
     try {
-      await axios.post('http://localhost:8090/api/v1/contact', formData);
+      await axios.post('https://aniclothing.onrender.com/api/v1/contact', formData);
       setSuccess('Your message has been sent successfully!');
       setFormData({ name: '', email: '', subject: '', message: '' });
     } catch (err) {

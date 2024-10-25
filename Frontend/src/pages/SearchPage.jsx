@@ -13,7 +13,7 @@ const SearchPage = () => {
                 return;
             }
             try {
-                const res = await axios.get(`http://localhost:8090/api/v1/user/search/${query}`);
+                const res = await axios.get(`https://aniclothing.onrender.com/api/v1/user/search/${query}`);
                 setData(res.data.data);
             } catch (error) {
                 console.error("Error fetching data:", error);

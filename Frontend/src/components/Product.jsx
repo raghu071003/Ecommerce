@@ -22,7 +22,7 @@ const Product = () => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:8090/api/v1/user/product/${id}`, { withCredentials: true });
+        const response = await axios.get(`https://aniclothing.onrender.com/api/v1/user/product/${id}`, { withCredentials: true });
         setProduct(response.data);
         setActiveImage(response.data.image[0]);
       } catch (error) {

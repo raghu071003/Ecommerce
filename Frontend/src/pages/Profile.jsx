@@ -94,8 +94,8 @@ const Profile = () => {
 
   const fetchData = async () => {
     try {
-      const res = await axios.post("http://localhost:8090/api/v1/user/profile", {}, { withCredentials: true });
-      const orderRes = await axios.post("http://localhost:8090/api/v1/user/getOrders", {}, { withCredentials: true });
+      const res = await axios.post("https://aniclothing.onrender.com/api/v1/user/profile", {}, { withCredentials: true });
+      const orderRes = await axios.post("https://aniclothing.onrender.com/api/v1/user/getOrders", {}, { withCredentials: true });
 
       setUser(res.data.data);
       setOrders(orderRes.data.data);
@@ -155,7 +155,7 @@ const Profile = () => {
     setError('');
 
     try {
-      const response = await axios.put('http://localhost:8090/api/v1/user/update-profile', formData, {
+      const response = await axios.put('https://aniclothing.onrender.com/api/v1/user/update-profile', formData, {
         withCredentials: true
       });
 

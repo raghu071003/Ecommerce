@@ -11,7 +11,7 @@ const ProductGrid = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8090/api/v1/user/products');
+        const response = await axios.get('https://aniclothing.onrender.com/api/v1/user/products');
         const productList = response.data;
 
         // Shuffle the products array
