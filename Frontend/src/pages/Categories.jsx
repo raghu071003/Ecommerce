@@ -18,7 +18,7 @@ const Categories = () => {
     setError(null);
     try {
       const res = await axios.get(`http://localhost:8090/api/v1/user/category/${category}?sort=${sortBy}`);
-      setProducts(res.data); // Ensure res.data is the products array
+      setProducts(res.data);
     } catch (e) {
       setError('Failed to fetch products');
       console.log(e);
@@ -26,13 +26,10 @@ const Categories = () => {
       setLoading(false);
     }
   };
-
-  // Fetch products when the category or sort order changes
   useEffect(() => {
     fetchProducts(category, sortBy);
   }, [category, sortBy]);
 
-  // Handle category click
   const handleCategory = (selectedCategory) => {
     setCategory(selectedCategory);
   };

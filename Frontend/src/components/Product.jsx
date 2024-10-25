@@ -3,16 +3,19 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../Context/AuthContext';
 import Loading from './Loading';
+import Notification from './Notification'; // Import Notification component
 
 const Product = () => {
   const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true); // Single loading state
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeImage, setActiveImage] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState('');
   const { id } = useParams();
   const { cartItem, addToCart } = useAuth();
+  const [showNotification, setShowNotification] = useState(false); // State for notification
+  const [msg, setMsg] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,20 +57,25 @@ const Product = () => {
       quantity,
       size: selectedSize,
       price: product.price,
-      image: product.image[0]
+      image: product.image[0],
     };
 
     addToCart(newItem);
+    setMsg('Item added to cart');
+    setShowNotification(true); // Show notification
   };
 
-  const handleCheckOut = ()=>{
-    if(!selectedSize){
-      setError('please select a size');
+  const handleCloseNotification = () => {
+    setShowNotification(false); // Close notification
+  };
+
+  const handleCheckOut = () => {
+    if (!selectedSize) {
+      setError('Please select a size');
       return;
     }
-    navigate(`/checkout/${product._id}/${selectedSize}`)
-
-  }
+    navigate(`/checkout/${product._id}/${selectedSize}`);
+  };
 
   if (loading) return <Loading />;
   if (error) return <p className="text-center text-lg font-semibold text-red-600">{error}</p>;
@@ -176,6 +184,11 @@ const Product = () => {
           </div>
         </div>
       </div>
+      
+      {/* Show Notification if visible */}
+      {showNotification && (
+        <Notification message={msg} type="success" onClose={handleCloseNotification} />
+      )}
     </div>
   );
 };

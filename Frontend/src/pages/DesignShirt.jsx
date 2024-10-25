@@ -12,7 +12,7 @@ const DesignPage = () => {
         {/* <ShirtModel color={color} /> */}
       </div>
 
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <label className="block text-lg font-medium mb-2">Select Shirt Color:</label>
         <input
           type="color"
@@ -20,7 +20,8 @@ const DesignPage = () => {
           onChange={(e) => setColor(e.target.value)}
           className="w-16 h-16"
         />
-      </div>
+      </div> */}
+      <p className='text-center'>Feature is under Development</p>
     </div>
   );
 };

@@ -21,7 +21,7 @@ export const AuthContextProvider = ({ children }) => {
     if (cachedAuth && currentTime - cachedAuth.timestamp < 30 * 60 * 1000) { // 30 minutes
       setIsLoggedIn(cachedAuth.isLoggedIn);
       setUser(cachedAuth.user);
-      fetchCartFromLocalStorage(); // Load cart from local storage
+      fetchCartFromLocalStorage();
     } else {
       try {
         const response = await axios.post('http://localhost:8090/api/v1/user/status', {}, { withCredentials: true });

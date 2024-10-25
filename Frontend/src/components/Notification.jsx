@@ -1,6 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-const Notification = ({ message, type, onClose }) => {
+const Notification = ({ message = 'Item added to cart!', type = 'success', onClose }) => {
+  // Automatically close the notification after 3 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onClose();
+    }, 3000); // 3 seconds
+
+    // Clear the timer if the component is unmounted or onClose is called
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
   const getNotificationStyle = () => {
     switch (type) {
       case 'success':
@@ -15,12 +25,15 @@ const Notification = ({ message, type, onClose }) => {
   };
 
   return (
-    <div className={`absolute top-14 right-0 m-4 p-4 rounded-lg shadow-lg ${getNotificationStyle()}`}>
+    <div
+      className={`fixed top-14 right-4 m-4 p-4 rounded-lg shadow-lg transform transition-transform duration-300 ease-in-out ${getNotificationStyle()}`}
+      style={{ transform: 'translateX(0)' }}
+    >
       <div className="flex justify-between items-center">
         <p>{message}</p>
         <button
           onClick={onClose}
-          className="text-xl font-bold leading-none text-white focus:outline-none"
+          className="text-xl font-bold leading-none text-white focus:outline-none ml-4"
         >
           &times;
         </button>

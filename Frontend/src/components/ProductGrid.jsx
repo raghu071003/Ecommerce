@@ -21,7 +21,7 @@ const ProductGrid = () => {
         const selectedProducts = shuffledProducts.slice(0, 6);
 
         setProducts(selectedProducts);
-        console.log(products);
+        // console.log(products);
         
       } catch (error) {
         setError('Failed to fetch products');

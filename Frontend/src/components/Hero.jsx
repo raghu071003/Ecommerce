@@ -12,7 +12,7 @@ const YourComponent = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setFadeClass('fade-out'); // Start fade-out effect
+      setFadeClass('fade-out');
       setTimeout(() => {
         setBannerIdx(prev => (prev + 1) % banners.length);
         setFadeClass('fade-in');
@@ -40,7 +40,7 @@ const YourComponent = () => {
       ></div>
       <div className='absolute top-0 left-0 h-96 w-full bg-black opacity-75 z-10'>
       </div>
-      <div className="relative container mx-auto text-center z-20 ">
+      <div className="relative container mx-auto text-center z-20">
         <h2 className="text-4xl font-bold mb-4 text-white">
           Welcome to Ani
           <span 
@@ -49,10 +49,10 @@ const YourComponent = () => {
             Clothing
           </span>
         </h2>
-        <p className="text-xl text-white">Discover amazing products at unbeatable prices!</p>
-        {/* <button className="bg-orange-400 text-white px-6 py-2 rounded-full hover:bg-orange-500 transition duration-300">
+        <p className="text-xl mb-8 text-white">Discover amazing products at unbeatable prices!</p>
+        <button className="bg-orange-400 text-white px-6 py-2 rounded-full hover:bg-orange-500 transition duration-300">
           Shop Now
-        </button> */}
+        </button>
       </div>
     </section>
   );
