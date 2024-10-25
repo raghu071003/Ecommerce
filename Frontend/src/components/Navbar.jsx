@@ -200,7 +200,7 @@ const Navbar = () => {
                 <ShoppingCart className="h-6 w-6" />
               </button>
               <button className="ml-4 p-1 rounded-full text-white hover:text-orange-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-white" onClick={handleUser}>
-                onClick={handleUser}
+
                 <User className="h-6 w-6" />
               </button>
               {userMenu && (

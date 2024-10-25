@@ -25,7 +25,7 @@ function App() {
   
   return (
     <>
-      <Router>
+      <Router basename='/'>
         <div className='flex flex-col flex-between'>
           <header>
             <Navbar />
@@ -37,7 +37,7 @@ function App() {
               <Route path='/signup' element={<AuthComponent />} />
               <Route path='/product/:id' element={<Product />} />
               <Route path='/contact' element={<ContactUs />} />
-              <Route path='/profile' element={<Profile />} />
+                <Route path='/profile' element={<Profile />} />
               <Route path='/search/:query' element={<SearchPage/>}/>
               <Route path ="/cart" element={<CartComponent/>}/>
               <Route path="/categories" element={<Categories />}/>
